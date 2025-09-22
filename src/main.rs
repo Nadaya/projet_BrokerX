@@ -1,4 +1,3 @@
-use cursive::views::{Dialog, TextView};
 use diesel::{Connection, PgConnection};
 
 mod structures; 
