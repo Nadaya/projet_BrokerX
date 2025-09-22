@@ -3,6 +3,7 @@ use diesel::{
     PgConnection,
     QueryResult,
 };
+use chrono::NaiveDateTime;
 use crate::traduction::transaction;
 
 // --- Structures ---
@@ -12,7 +13,7 @@ pub struct Transaction {
     pub id: i32,
     pub portfeuille_id: i32,
     pub amount: i32,
-    pub transaction_date: chrono::NaiveDateTime,
+    pub transaction_date: NaiveDateTime,
 }
 
 #[derive(Insertable)]
@@ -20,7 +21,7 @@ pub struct Transaction {
 pub struct NewTransaction {
     pub portfeuille_id: i32,
     pub amount: i32,
-    pub transaction_date: chrono::NaiveDateTime,
+    pub transaction_date: NaiveDateTime,
 }
 
 // --- Implémentations ---

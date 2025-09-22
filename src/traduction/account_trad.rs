@@ -6,5 +6,6 @@ table! {
         username -> Varchar,
         password -> VarChar,
         role -> VarChar,
+        client_id -> Integer,
     }
 }

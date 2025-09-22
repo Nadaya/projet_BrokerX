@@ -14,6 +14,7 @@ pub struct Account {
     pub username: String,
     pub password: String,
     pub role: String,
+    pub client_id: i32,
 }
 
 #[derive(Insertable)]
@@ -22,6 +23,7 @@ pub struct NewAccount {
     pub username: String,
     pub password: String,
     pub role: String,
+    pub client_id: i32,
 }
 
 // --- Implémentations ---
@@ -33,12 +35,14 @@ impl Account {
         username: &str,
         password: &str,
         role: &str,
+        client_id: i32,
     ) -> QueryResult<Account> {
 
         let new_account = NewAccount {
             username: username.to_string(),
             password: password.to_string(),
             role: role.to_string(),
+            client_id,
         };
 
         diesel::insert_into(account::table)
