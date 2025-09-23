@@ -10,7 +10,7 @@ use crate::traduction::clients;
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = clients)]
 pub struct Client {
-    pub id: i32,
+    pub client_id: i32,
     pub name: String,
     pub email: String,
     pub phone: String,

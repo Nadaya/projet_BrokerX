@@ -10,11 +10,11 @@ use crate::traduction::account;
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = account)]
 pub struct Account {
-    pub id: i32,
+    pub account_id: i32,
     pub username: String,
     pub password: String,
-    pub role: String,
     pub client_id: i32,
+    pub portefeuille_id: i32,
 }
 
 #[derive(Insertable)]
@@ -22,8 +22,8 @@ pub struct Account {
 pub struct NewAccount {
     pub username: String,
     pub password: String,
-    pub role: String,
     pub client_id: i32,
+    pub portefeuille_id: i32,
 }
 
 // --- Implémentations ---
@@ -34,15 +34,15 @@ impl Account {
         conn: &mut PgConnection,
         username: &str,
         password: &str,
-        role: &str,
         client_id: i32,
+        portefeuille_id: i32,
     ) -> QueryResult<Account> {
 
         let new_account = NewAccount {
             username: username.to_string(),
             password: password.to_string(),
-            role: role.to_string(),
             client_id,
+            portefeuille_id,
         };
 
         diesel::insert_into(account::table)

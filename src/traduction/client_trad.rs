@@ -1,8 +1,8 @@
 use diesel::table;
 
 table! {
-    clients (id) {
-        id -> Integer,
+    clients (client_id) {
+        client_id -> Integer,
         name -> Varchar,
         email -> VarChar,
         phone -> VarChar,

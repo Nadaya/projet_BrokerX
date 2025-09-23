@@ -10,14 +10,12 @@ use crate::traduction::portefeuille;
 #[diesel(table_name = portefeuille)]
 pub struct Portefeuille {
     pub id: i32,
-    pub client_id: i32,
     pub balance: i32,
 }
 
 #[derive(Insertable)]
 #[diesel(table_name = portefeuille)]
 pub struct NewPortefeuille {
-    pub client_id: i32,
     pub balance: i32,
 }
 
@@ -26,12 +24,10 @@ impl Portefeuille {
     /* UC-02 : Create a portefeuille and check ID */
     pub fn create_portefeuille(
         conn: &mut PgConnection,
-        client_id: i32,
         balance: i32,
     ) -> QueryResult<Portefeuille> {
 
         let new_portefeuille = NewPortefeuille {
-            client_id,
             balance,
         };
 
@@ -47,13 +43,12 @@ impl Portefeuille {
         portefeuille::table.find(portefeuille_id).first::<Portefeuille>(conn)
     }
 
-    pub fn search_portefeuille_by_client_id(
-        conn: &mut PgConnection,
-        client_id: i32,
-    ) -> QueryResult<Portefeuille> {
-        portefeuille::table
-            .filter(portefeuille::client_id.eq(client_id))
-            .first::<Portefeuille>(conn)}
+    // pub fn search_portefeuille_by_client_id(
+    //     conn: &mut PgConnection,
+    // ) -> QueryResult<Portefeuille> {
+    //     portefeuille::table
+    //         .filter(portefeuille::client_id.eq(client_id))
+    //         .first::<Portefeuille>(conn)}
 
     pub fn update_balance(
         conn: &mut PgConnection,

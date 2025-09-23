@@ -1,11 +1,11 @@
 use diesel::table;
 
 table! {
-    account (id) {
-        id -> Integer,
+    account (account_id) {
+        account_id -> Integer,
         username -> Varchar,
         password -> VarChar,
-        role -> VarChar,
         client_id -> Integer,
+        portefeuille_id -> Integer,
     }
 }

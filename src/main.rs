@@ -9,6 +9,8 @@ mod traduction;
 use structures::client::Client;
 use structures::account::Account;
 
+use crate::structures::portefeuille;
+
 fn main() {
 
     let database_url: &str = "postgresql://postgres:postgres@localhost:5432/BrokerX";
@@ -48,7 +50,6 @@ fn create_client_and_account(conn: &mut PgConnection) {
     let mut phone = String::new();
     let mut username = String::new();
     let mut password = String::new();
-    let mut role = String::new();
 
     println!("--- Création d'un client ---");
     println!("Nom : ");
@@ -62,25 +63,26 @@ fn create_client_and_account(conn: &mut PgConnection) {
     let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
         .expect("Erreur lors de la création du client");
 
-    println!("Client créé avec id={}", client.id);
+    println!("Client créé avec id={}", client.client_id);
 
     println!("--- Création du compte lié ---");
     println!("Username : ");
     io::stdin().read_line(&mut username).unwrap();
     println!("Password : ");
     io::stdin().read_line(&mut password).unwrap();
-    println!("Role : ");
-    io::stdin().read_line(&mut role).unwrap();
+
+    let portefeuille = portefeuille::Portefeuille::create_portefeuille(conn, 0)
+        .expect("Erreur lors de la création du portefeuille");
 
     let account = Account::create_account(
         conn,
         username.trim(),
         password.trim(),
-        role.trim(),
-        client.id, // Lien avec le client créé
+        client.client_id, // Lien avec le client créé
+        portefeuille.id,  // Lien avec le portefeuille créé
     ).expect("Erreur lors de la création du compte");
 
-    println!("✅ Compte créé avec id={} lié au client_id={}", account.id, account.client_id);
+    println!("✅ Compte créé avec id={} lié au client_id={} et au portefeuille_id={}", account.account_id, account.client_id, portefeuille.id);
 }
 
 fn login(conn: &mut PgConnection){
@@ -112,19 +114,19 @@ fn login(conn: &mut PgConnection){
                 match sub_choice.trim() {
                     "1" => {
                         println!("--- Informations du compte ---");
-                        println!("ID: {}", account.id);
+                        println!("ID: {}", account.account_id);
                         println!("Username: {}", account.username);
-                        println!("Role: {}", account.role);
                         println!("Client ID: {}", account.client_id);
                     }
                     "2" => {
                         println!("--- Solde du portefeuille ---");
-                        match structures::portefeuille::Portefeuille::search_portefeuille_by_client_id(conn, account.client_id) {
-                            Ok(portefeuilles) => {
-                                println!("Solde du portefeuille: {}", portefeuilles.balance);
+                        // Logique pour afficher le solde du portefeuille ici
+                        match structures::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
+                            Ok(portefeuille) => {
+                                println!("Solde actuel: {}", portefeuille.balance);
                             }
-                            Err(err) => {
-                                println!("Erreur lors de la récupération du portefeuille: {}", err);
+                            Err(_) => {
+                                println!("Portefeuille non trouvé pour ce client.");
                             }
                         }
                     }
