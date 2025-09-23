@@ -1,10 +1,10 @@
 use diesel::table;
 
 table! {
-    client (id) {
+    clients (id) {
         id -> Integer,
         name -> Varchar,
         email -> VarChar,
-        phone -> Integer,
+        phone -> VarChar,
     }
 }

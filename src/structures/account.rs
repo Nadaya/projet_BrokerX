@@ -68,4 +68,14 @@ impl Account {
             .filter(account::username.ilike(pattern))
             .load::<Account>(conn)
     }
+
+    pub fn delete_account(
+        conn: &mut PgConnection,
+        username: String,
+    ) -> QueryResult<usize> {
+        use crate::traduction::account::dsl::*;
+        let rows_deleted = diesel::delete(account.filter(username.eq(username)))
+            .execute(conn)?;
+        Ok(rows_deleted)
+    }
 }

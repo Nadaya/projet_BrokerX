@@ -3,25 +3,25 @@ use diesel::{
     PgConnection,
     QueryResult,
 };
-use crate::traduction::client;
+use crate::traduction::clients;
 
 // --- Structures ---
 
 #[derive(Queryable, Selectable)]
-#[diesel(table_name = client)]
+#[diesel(table_name = clients)]
 pub struct Client {
     pub id: i32,
     pub name: String,
     pub email: String,
-    pub phone: i32,
+    pub phone: String,
 }
 
 #[derive(Insertable)]
-#[diesel(table_name = client)]
+#[diesel(table_name = clients)]
 pub struct NewClient {
     pub name: String,
     pub email: String,
-    pub phone: i32,
+    pub phone: String,
 }
 
 // --- Implémentations ---
@@ -38,10 +38,10 @@ impl Client {
         let new_client = NewClient {
             name: name.to_string(),
             email: email.to_string(),
-            phone,
+            phone: phone.to_string(),
         };
 
-        diesel::insert_into(client::table)
+        diesel::insert_into(clients::table)
             .values(&new_client)
             .get_result(conn)
     }
@@ -50,7 +50,7 @@ impl Client {
         conn: &mut PgConnection,
         client_id: i32,
     ) -> QueryResult<Client> {
-        client::table.find(client_id).first::<Client>(conn)
+        clients::table.find(client_id).first::<Client>(conn)
     }
 
     pub fn search_client_by_name(
@@ -59,7 +59,7 @@ impl Client {
     ) -> QueryResult<Vec<Client>> {
 
         let pattern = format!("%{}%", client_name);
-        client::table.filter(client::name.ilike(pattern)).load::<Client>(conn)
+        clients::table.filter(clients::name.ilike(pattern)).load::<Client>(conn)
     }
 
     pub fn search_client_by_email(
@@ -68,6 +68,6 @@ impl Client {
     ) -> QueryResult<Vec<Client>> {
 
         let pattern = format!("%{}%", client_email);
-        client::table.filter(client::email.ilike(pattern)).load::<Client>(conn)
+        clients::table.filter(clients::email.ilike(pattern)).load::<Client>(conn)
     }
 }
