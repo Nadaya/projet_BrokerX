@@ -1,7 +1,6 @@
 use std::io;
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
-use std::env;
+use diesel::{Connection, PgConnection};
+
 
 mod structures;
 mod traduction;
@@ -10,7 +9,10 @@ use structures::client::Client;
 use structures::account::Account;
 
 fn main() {
-    let mut conn = establish_connection();
+
+    let database_url: &str = "postgresql://postgres:postgres@localhost:5432/BrokerX";
+    let mut conn = PgConnection::establish(database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
+    // let mut conn: PgConnection = establish_connection();
 
     println!("=== Application BrokerX ===");
     println!("1. Créer un client + compte");
@@ -32,12 +34,10 @@ fn main() {
     }
 }
 
-fn establish_connection() -> PgConnection {
-    let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL doit être défini dans .env");
-    PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Erreur de connexion à {}", database_url))
-}
+// fn establish_connection() -> PgConnection {
+//     let database_url: &str = "postgresql://postgres:postgres@localhost:5432/BrokerX";
+//     let conn = PgConnection::establish(database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
+// }
 
 fn create_client_and_account(conn: &mut PgConnection) {
     let mut name = String::new();

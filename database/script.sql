@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS public.account
     username character varying(50) COLLATE pg_catalog."default" NOT NULL,
     password character varying(255) COLLATE pg_catalog."default" NOT NULL,
     role character varying(20) COLLATE pg_catalog."default" NOT NULL,
-    client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE
+    client_id INT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
     CONSTRAINT accounts_pkey PRIMARY KEY (id),
     CONSTRAINT accounts_username_key UNIQUE (username)
 );
