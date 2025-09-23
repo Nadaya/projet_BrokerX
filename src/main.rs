@@ -42,11 +42,6 @@ fn main() {
     }
 }
 
-// fn establish_connection() -> PgConnection {
-//     let database_url: &str = "postgresql://postgres:postgres@localhost:5432/BrokerX";
-//     let conn = PgConnection::establish(database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
-// }
-
 fn create_client_and_account(conn: &mut PgConnection) {
     let mut name = String::new();
     let mut email = String::new();
@@ -67,7 +62,7 @@ fn create_client_and_account(conn: &mut PgConnection) {
     let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
         .expect("Erreur lors de la création du client");
 
-    println!("✅ Client créé avec id={}", client.id);
+    println!("Client créé avec id={}", client.id);
 
     println!("--- Création du compte lié ---");
     println!("Username : ");
@@ -82,7 +77,7 @@ fn create_client_and_account(conn: &mut PgConnection) {
         username.trim(),
         password.trim(),
         role.trim(),
-        client.id, // 🔗 Lien avec le client créé
+        client.id, // Lien avec le client créé
     ).expect("Erreur lors de la création du compte");
 
     println!("✅ Compte créé avec id={} lié au client_id={}", account.id, account.client_id);
@@ -103,11 +98,13 @@ fn login(conn: &mut PgConnection){
 
     match Account::login(conn, username, password) {
         Ok(Some(account)) => {
-            println!("✅ Connexion réussie ! Bienvenue, {}.", account.username);
+            println!("Connexion réussie ! Bienvenue, {}.", account.username);
             loop {
                 println!("\n=== Interface Utilisateur ===");
                 println!("1. Voir mes informations");
-                println!("2. Déconnexion");
+                println!("2. Voir le solde de mon portefeuille");
+                println!("3. Faire une transaction");
+                println!("4. Déconnexion");
 
                 let mut sub_choice = String::new();
                 io::stdin().read_line(&mut sub_choice).unwrap();
@@ -121,6 +118,22 @@ fn login(conn: &mut PgConnection){
                         println!("Client ID: {}", account.client_id);
                     }
                     "2" => {
+                        println!("--- Solde du portefeuille ---");
+                        match structures::portefeuille::Portefeuille::search_portefeuille_by_client_id(conn, account.client_id) {
+                            Ok(portefeuilles) => {
+                                println!("Solde du portefeuille: {}", portefeuilles.balance);
+                            }
+                            Err(err) => {
+                                println!("Erreur lors de la récupération du portefeuille: {}", err);
+                            }
+                        }
+                    }
+                    "3" => {
+                        println!("--- Faire une transaction ---");
+                        // Logique de transaction ici
+                        println!("Fonction de transaction non implémentée.");
+                    }
+                    "4" => {
                         println!("Déconnexion...");
                         break;
                     }
@@ -131,7 +144,7 @@ fn login(conn: &mut PgConnection){
             }
         }
         Ok(None) => {
-            println!("❌ Username/password invalides.");
+            println!("Username/password invalides.");
         }
         Err(err) => {
             println!("Erreur lors de la connexion: {}", err);
@@ -151,9 +164,9 @@ fn delete_account(conn: &mut PgConnection) {
     match Account::delete_account(conn,username) {
         Ok(rows_deleted) => {
             if rows_deleted > 0 {
-                println!("✅ Compte supprimé");
+                println!("Compte supprimé");
             } else {
-                println!("❌ Aucun compte trouvé ");
+                println!("Aucun compte trouvé ");
             }
         }
         Err(err) => {

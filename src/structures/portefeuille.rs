@@ -50,11 +50,10 @@ impl Portefeuille {
     pub fn search_portefeuille_by_client_id(
         conn: &mut PgConnection,
         client_id: i32,
-    ) -> QueryResult<Vec<Portefeuille>> {
+    ) -> QueryResult<Portefeuille> {
         portefeuille::table
             .filter(portefeuille::client_id.eq(client_id))
-            .load::<Portefeuille>(conn)
-    }
+            .first::<Portefeuille>(conn)}
 
     pub fn update_balance(
         conn: &mut PgConnection,
