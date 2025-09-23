@@ -78,4 +78,22 @@ impl Account {
             .execute(conn)?;
         Ok(rows_deleted)
     }
+
+    pub fn login(
+        conn: &mut PgConnection,
+        username: &str,
+        password: &str,
+    )-> Result<Option<Account>, diesel::result::Error> {
+        use crate::traduction::account::dsl::*;
+
+        match account.filter(username.eq(username))
+                     .filter(password.eq(password))
+                     .first::<Account>(conn)
+                     .optional()? 
+        {
+            Some(acc) => Ok(Some(acc)),  // compte trouvé et password correct
+            None => Ok(None),            // compte non trouvé ou password incorrect
+        }
+    }
+
 }

@@ -32,7 +32,7 @@ impl Client {
         conn: &mut PgConnection,
         name: &str,
         email: &str,
-        phone: i32,
+        phone: &str,
     ) -> QueryResult<Client> {
 
         let new_client = NewClient {

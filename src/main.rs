@@ -13,12 +13,12 @@ fn main() {
 
     let database_url: &str = "postgresql://postgres:postgres@localhost:5432/BrokerX";
     let mut conn = PgConnection::establish(database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
-    // let mut conn: PgConnection = establish_connection();
 
     println!("=== Application BrokerX ===");
     println!("1. Créer un client + compte");
-    println!("2. Supprimer mon compte");
-    println!("3. Quitter");
+    println!("2. Login");
+    println!("3. Supprimer mon compte");
+    println!("4. Quitter");
 
     let mut choice = String::new();
     io::stdin().read_line(&mut choice).expect("Erreur de lecture");
@@ -28,9 +28,12 @@ fn main() {
             create_client_and_account(&mut conn);
         }
         "2" => {
-            delete_account(&mut conn);
+            login(&mut conn);
         }
         "3" => {
+            delete_account(&mut conn);
+        }
+        "4" => {
             println!("Au revoir !");
         }
         _ => {
@@ -59,10 +62,9 @@ fn create_client_and_account(conn: &mut PgConnection) {
     io::stdin().read_line(&mut email).unwrap();
     println!("Téléphone : ");
     io::stdin().read_line(&mut phone).unwrap();
-    let phone: i32 = phone.trim().parse().unwrap_or(0);
 
     // Création du client
-    let client = Client::create_client(conn, name.trim(), email.trim(), phone)
+    let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
         .expect("Erreur lors de la création du client");
 
     println!("✅ Client créé avec id={}", client.id);
@@ -85,6 +87,58 @@ fn create_client_and_account(conn: &mut PgConnection) {
 
     println!("✅ Compte créé avec id={} lié au client_id={}", account.id, account.client_id);
 }
+
+fn login(conn: &mut PgConnection){
+    let mut username = String::new();
+    let mut password = String::new();
+
+    println!("--- Connexion ---");
+    println!("Username : ");
+    io::stdin().read_line(&mut username).unwrap();
+    println!("Password : ");
+    io::stdin().read_line(&mut password).unwrap();
+
+    let username: &str = username.trim();
+    let password = password.trim();
+
+    match Account::login(conn, username, password) {
+        Ok(Some(account)) => {
+            println!("✅ Connexion réussie ! Bienvenue, {}.", account.username);
+            loop {
+                println!("\n=== Interface Utilisateur ===");
+                println!("1. Voir mes informations");
+                println!("2. Déconnexion");
+
+                let mut sub_choice = String::new();
+                io::stdin().read_line(&mut sub_choice).unwrap();
+
+                match sub_choice.trim() {
+                    "1" => {
+                        println!("--- Informations du compte ---");
+                        println!("ID: {}", account.id);
+                        println!("Username: {}", account.username);
+                        println!("Role: {}", account.role);
+                        println!("Client ID: {}", account.client_id);
+                    }
+                    "2" => {
+                        println!("Déconnexion...");
+                        break;
+                    }
+                    _ => {
+                        println!("Choix invalide !");
+                    }
+                }
+            }
+        }
+        Ok(None) => {
+            println!("❌ Username/password invalides.");
+        }
+        Err(err) => {
+            println!("Erreur lors de la connexion: {}", err);
+        }
+    }
+}
+
 
 fn delete_account(conn: &mut PgConnection) {
     let mut username = String::new();
