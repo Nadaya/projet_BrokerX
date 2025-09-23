@@ -71,29 +71,45 @@ impl Account {
 
     pub fn delete_account(
         conn: &mut PgConnection,
-        username: String,
+        usern: String,
     ) -> QueryResult<usize> {
         use crate::traduction::account::dsl::*;
-        let rows_deleted = diesel::delete(account.filter(username.eq(username)))
+        let rows_deleted = diesel::delete(account.filter(username.eq(usern)))
             .execute(conn)?;
         Ok(rows_deleted)
     }
 
-    pub fn login(
-        conn: &mut PgConnection,
-        username: &str,
-        password: &str,
-    )-> Result<Option<Account>, diesel::result::Error> {
-        use crate::traduction::account::dsl::*;
+    // pub fn login(
+    //     conn: &mut PgConnection,
+    //     username: &str,
+    //     password: &str,
+    // )-> Result<Option<Account>, diesel::result::Error> {
+    //     use crate::traduction::account::dsl::*;
 
-        match account.filter(username.eq(username))
-                     .filter(password.eq(password))
-                     .first::<Account>(conn)
-                     .optional()? 
-        {
-            Some(acc) => Ok(Some(acc)),  // compte trouvé et password correct
-            None => Ok(None),            // compte non trouvé ou password incorrect
-        }
+    //     match account.filter(username.eq(username))
+    //                  .filter(password.eq(password))
+    //                  .first::<Account>(conn)
+    //                  .optional()? 
+    //     {
+    //         Some(acc) => Ok(Some(acc)),  // compte trouvé et password correct
+    //         None => Ok(None),            // compte non trouvé ou password incorrect
+    //     }
+    // }
+
+    pub fn login(
+        conn: &mut PgConnection, 
+        usern: &str, 
+        passw: &str,
+    ) -> Result<Option<Account>, diesel::result::Error> {
+        use crate::traduction::account::dsl::*;
+        match account.filter(username.eq(usern))
+                        .filter(password.eq(passw))
+                        .first::<Account>(conn)
+                        .optional()? 
+            {
+                Some(acc) => Ok(Some(acc)),  // compte trouvé et password correct
+                None => Ok(None),    // compte non trouvé ou password incorrect
+            }
     }
 
 }
