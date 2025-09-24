@@ -3,13 +3,13 @@ use diesel::dsl::delete;
 use diesel::{Connection, PgConnection};
 
 
-mod structures;
-mod traduction;
+mod domain;
+mod infrastructure;
 
-use structures::client::Client;
-use structures::account::Account;
+use domain::client::Client;
+use domain::account::Account;
 
-use crate::structures::portefeuille;
+use crate::domain::portefeuille;
 
 fn main() {
 
@@ -121,7 +121,7 @@ fn login(conn: &mut PgConnection){
                     "2" => {
                         println!("--- Solde du portefeuille ---");
                         // Logique pour afficher le solde du portefeuille ici
-                        match structures::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
+                        match domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
                             Ok(portefeuille) => {
                                 println!("Solde actuel: {}", portefeuille.balance);
                             }

@@ -3,7 +3,7 @@ use diesel::{
     PgConnection,
     QueryResult,
 };
-use crate::traduction::portefeuille;
+use crate::infrastructure::persistance::portefeuille;
 
 // --- Structures ---
 #[derive(Queryable, Selectable)]

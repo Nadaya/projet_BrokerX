@@ -3,7 +3,7 @@ use diesel::{
     PgConnection,
     QueryResult,
 };
-use crate::traduction::account;
+use crate::infrastructure::persistance::account;
 
 // --- Structures ---
 
@@ -73,7 +73,7 @@ impl Account {
         conn: &mut PgConnection,
         usern: String,
     ) -> QueryResult<usize> {
-        use crate::traduction::account::dsl::*;
+        use crate::infrastructure::persistance::account::dsl::*;
         let rows_deleted = diesel::delete(account.filter(username.eq(usern)))
             .execute(conn)?;
         Ok(rows_deleted)
@@ -101,7 +101,7 @@ impl Account {
         usern: &str, 
         passw: &str,
     ) -> Result<Option<Account>, diesel::result::Error> {
-        use crate::traduction::account::dsl::*;
+        use crate::infrastructure::persistance::account::dsl::*;
         match account.filter(username.eq(usern))
                         .filter(password.eq(passw))
                         .first::<Account>(conn)

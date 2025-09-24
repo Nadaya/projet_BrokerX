@@ -3,7 +3,7 @@ use diesel::{
     PgConnection,
     QueryResult,
 };
-use crate::traduction::clients;
+use crate::infrastructure::persistance::clients;
 
 // --- Structures ---
 
