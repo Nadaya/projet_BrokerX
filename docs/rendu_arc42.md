@@ -51,10 +51,17 @@ Le système permet au client de :
 # 4. Stratégie de solution 
 
 # 5. Vue du bloc de consctruction 
+## 5.1 Diagramme de classes
+![Classes](images/diagramme_classes.png)
 
-# 6. Vue du temps d'exécution 
+## 5.2 Diagramme de paquetage
+![Paquetage](images/diagramme_paquetage.png)
+
+# 6. Vue d'exécution 
+![Use case](images/vue_execution.png)
 
 # 7. Vue de déploiement
+![Deploiement](images/deploiement.png)
 
 # 8. Concepts transversaux
 
