@@ -71,7 +71,7 @@ Dans cette première phase, on se concentre sur trois cas d’utilisation priori
 Ici, le client est l’élément central : il possède un compte pour s’authentifier et un portefeuille pour stocker ses fonds. Chaque portefeuille contient une suite de transactions qui permettent de retracer son historique.
 
 ### 5.2 Diagramme de paquetage
-![Paquetage](images/diagramme_paquet.png)
+![Paquetage](images/diagramme_paquetage.png)
 
 ## 6. Vue d'exécution 
 ### 6.1 Description des 3 UC Must
