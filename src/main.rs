@@ -1,6 +1,8 @@
 use std::io;
 use diesel::dsl::delete;
 use diesel::{Connection, PgConnection};
+use std::thread;
+use std::time::Duration;
 
 
 mod domain;
@@ -63,7 +65,7 @@ fn create_client_and_account(conn: &mut PgConnection) {
     let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
         .expect("Erreur lors de la création du client");
 
-    println!("Client créé avec id={}", client.client_id);
+    println!("Client créé ");
 
     println!("--- Création du compte lié ---");
     println!("Username : ");
@@ -82,7 +84,11 @@ fn create_client_and_account(conn: &mut PgConnection) {
         portefeuille.id,  // Lien avec le portefeuille créé
     ).expect("Erreur lors de la création du compte");
 
-    println!("✅ Compte créé avec id={} lié au client_id={} et au portefeuille_id={}", account.account_id, account.client_id, portefeuille.id);
+    println!("Compte créé - état Pending");
+    thread::sleep(Duration::from_secs(4));
+
+    Account::activate(conn, account.account_id).expect("Erreur lors de l'activation du compte");
+    println!("Votre compte est maintenant Active");
 }
 
 fn login(conn: &mut PgConnection){
@@ -100,49 +106,55 @@ fn login(conn: &mut PgConnection){
 
     match Account::login(conn, username, password) {
         Ok(Some(account)) => {
-            println!("Connexion réussie ! Bienvenue, {}.", account.username);
-            loop {
-                println!("\n=== Interface Utilisateur ===");
-                println!("1. Voir mes informations");
-                println!("2. Voir le solde de mon portefeuille");
-                println!("3. Faire une transaction");
-                println!("4. Déconnexion");
+            if account.status == "Active" {
+                println!("Connexion réussie ! Bienvenue, {}.", account.username);
+                loop {
+                    println!("\n=== Interface Utilisateur ===");
+                    println!("1. Voir mes informations");
+                    println!("2. Voir le solde de mon portefeuille");
+                    println!("3. Faire une transaction");
+                    println!("4. Déconnexion");
 
-                let mut sub_choice = String::new();
-                io::stdin().read_line(&mut sub_choice).unwrap();
+                    let mut sub_choice = String::new();
+                    io::stdin().read_line(&mut sub_choice).unwrap();
 
-                match sub_choice.trim() {
-                    "1" => {
-                        println!("--- Informations du compte ---");
-                        println!("ID: {}", account.account_id);
-                        println!("Username: {}", account.username);
-                        println!("Client ID: {}", account.client_id);
-                    }
-                    "2" => {
-                        println!("--- Solde du portefeuille ---");
-                        // Logique pour afficher le solde du portefeuille ici
-                        match domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
-                            Ok(portefeuille) => {
-                                println!("Solde actuel: {}", portefeuille.balance);
-                            }
-                            Err(_) => {
-                                println!("Portefeuille non trouvé pour ce client.");
+                    match sub_choice.trim() {
+                        "1" => {
+                            println!("--- Informations du compte ---");
+                            println!("ID: {}", account.account_id);
+                            println!("Username: {}", account.username);
+                            println!("Client ID: {}", account.client_id);
+                        }
+                        "2" => {
+                            println!("--- Solde du portefeuille ---");
+                            // Logique pour afficher le solde du portefeuille ici
+                            match domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
+                                Ok(portefeuille) => {
+                                    println!("Solde actuel: {}", portefeuille.balance);
+                                }
+                                Err(_) => {
+                                    println!("Portefeuille non trouvé pour ce client.");
+                                }
                             }
                         }
-                    }
-                    "3" => {
-                        println!("--- Faire une transaction ---");
-                        // Logique de transaction ici
-                        println!("Fonction de transaction non implémentée.");
-                    }
-                    "4" => {
-                        println!("Déconnexion...");
-                        break;
-                    }
-                    _ => {
-                        println!("Choix invalide !");
+                        "3" => {
+                            println!("--- Faire une transaction ---");
+                            // Logique de transaction ici
+                            println!("Fonction de transaction non implémentée.");
+                        }
+                        "4" => {
+                            println!("Déconnexion...");
+                            break;
+                        }
+                        _ => {
+                            println!("Choix invalide !");
+                        }
                     }
                 }
+            }else if account.status == "Pending" {
+                println!("Votre compte est en attente de validation.");
+            } else if account.status == "Rejected" {
+                println!("Votre compte a été rejeté.");
             }
         }
         Ok(None) => {

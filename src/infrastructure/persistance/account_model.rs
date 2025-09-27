@@ -7,5 +7,6 @@ table! {
         password -> VarChar,
         client_id -> Integer,
         portefeuille_id -> Integer,
+        status -> Varchar,
     }
 }

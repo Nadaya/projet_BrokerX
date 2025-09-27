@@ -15,6 +15,7 @@ pub struct Account {
     pub password: String,
     pub client_id: i32,
     pub portefeuille_id: i32,
+    pub status : String,
 }
 
 #[derive(Insertable)]
@@ -24,6 +25,8 @@ pub struct NewAccount {
     pub password: String,
     pub client_id: i32,
     pub portefeuille_id: i32,
+    pub status : String,
+
 }
 
 // --- Implémentations ---
@@ -43,6 +46,7 @@ impl Account {
             password: password.to_string(),
             client_id,
             portefeuille_id,
+            status : ("Pending").to_string(),
         };
 
         diesel::insert_into(account::table)
@@ -77,6 +81,22 @@ impl Account {
         let rows_deleted = diesel::delete(account.filter(username.eq(usern)))
             .execute(conn)?;
         Ok(rows_deleted)
+    }
+
+    pub fn activate(conn: &mut PgConnection, _account_id: i32) -> QueryResult<usize> {
+        use crate::infrastructure::persistance::account::dsl::*;
+        diesel::update(account.filter(account_id.eq(_account_id)))
+            .set(status.eq("Active"))
+            .execute(conn)
+    }
+
+    pub fn reject(conn: &mut PgConnection, _account_id: i32) -> QueryResult<usize> {
+        use crate::infrastructure::persistance::account::dsl::*;
+        diesel::update(account.filter(account_id.eq(_account_id)))
+            .set((
+                status.eq("Rejected"),
+            ))
+            .execute(conn)
     }
 
     // pub fn login(
