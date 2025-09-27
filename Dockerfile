@@ -16,7 +16,7 @@ RUN cargo build --release
 FROM debian:bookworm-slim
 
 # Installer dépendances nécessaires (certificats, SSL, etc.)
-RUN apt-get update && apt-get install -y libssl-dev ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libpq-dev libssl-dev ca-certificates && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

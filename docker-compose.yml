@@ -1,27 +1,25 @@
 services:
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    env_file: .env.docker
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
+
   app:
     build: .
     container_name: rust_app
     ports:
       - "8080:8080"
-    environment:
-      DATABASE_URL: postgres://user:password@db:5432/mydb
+    env_file: .env.docker
+    stdin_open: true
+    tty: true
     depends_on:
       - db
-
-  db:
-    image: postgres:16
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
-    ports:
-      - "5433:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./database:/docker-entrypoint-initdb.d
 
 volumes:
   db_data:

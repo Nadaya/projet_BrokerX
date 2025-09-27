@@ -9,7 +9,7 @@ use crate::infrastructure::persistance::portefeuille;
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = portefeuille)]
 pub struct Portefeuille {
-    pub id: i32,
+    pub portefeuille_id: i32,
     pub balance: i32,
 }
 
@@ -78,11 +78,11 @@ impl Portefeuille {
 
     pub fn approvisionner(
                 conn: &mut PgConnection,
-        portefeuille_id: i32,
+        _portefeuille_id: i32,
         montant: i32,
     ) -> QueryResult<usize> {
         use crate::infrastructure::persistance::portefeuille::dsl::*;
-        diesel::update(portefeuille.filter(id.eq(portefeuille_id)))
+        diesel::update(portefeuille.filter(portefeuille_id.eq(_portefeuille_id)))
             .set(balance.eq(balance + montant))
             .execute(conn)
     }

@@ -48,7 +48,7 @@ let mut name = String::new();
         username.trim(),
         password.trim(),
         client.client_id, // Lien avec le client créé
-        portefeuille.id,  // Lien avec le portefeuille créé
+        portefeuille.portefeuille_id,  // Lien avec le portefeuille créé
         mfa_enabled,
     ).expect("Erreur lors de la création du compte");
 

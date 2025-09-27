@@ -1,8 +1,8 @@
 use diesel::table;
 
 table! {
-    portefeuille (id) {
-        id -> Integer,
+    portefeuille (portefeuille_id) {
+        portefeuille_id -> Integer,
         balance -> Integer,
     }
 }
