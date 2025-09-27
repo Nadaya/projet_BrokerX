@@ -17,12 +17,13 @@ jobs:
         run: cargo clippy
 
  
-test: 
-    runs-on: ubuntu-latest
-    name: tests
-    steps:
-    - uses: actions/checkout@v4
+  test: 
+      runs-on: ubuntu-latest
+      name: tests
+      steps:
+      - uses: actions/checkout@v4
 
-    - name: tests job
-      run: cargo test
+      - name: tests job
+        run: cargo test
+
 
