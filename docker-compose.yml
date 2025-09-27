@@ -3,9 +3,9 @@ services:
     image: postgres:16
     container_name: postgres_db
     restart: always
-    env_file: .env.docker
+    env_file: .env_docker
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./database:/docker-entrypoint-initdb.d
@@ -15,7 +15,7 @@ services:
     container_name: rust_app
     ports:
       - "8080:8080"
-    env_file: .env.docker
+    env_file: .env_docker
     stdin_open: true
     tty: true
     depends_on:

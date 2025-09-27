@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS clients CASCADE;
+DROP TABLE IF EXISTS portfeuille CASCADE;
+DROP TABLE IF EXISTS account CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
+
 CREATE TABLE IF NOT EXISTS public.clients
 (
     client_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
@@ -24,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public.account
     client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
     portefeuille_id INT NOT NULL REFERENCES portefeuille(portefeuille_id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL DEFAULT 'Pending', 
-    mfa_enable BOOLEAN NOT NULL DEFAULT false,
+    mfa_enabled BOOLEAN NOT NULL DEFAULT false,
     
     CONSTRAINT accounts_pkey PRIMARY KEY (account_id),
     CONSTRAINT accounts_username_key UNIQUE (username)
