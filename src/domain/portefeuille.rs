@@ -43,13 +43,6 @@ impl Portefeuille {
         portefeuille::table.find(portefeuille_id).first::<Portefeuille>(conn)
     }
 
-    // pub fn search_portefeuille_by_client_id(
-    //     conn: &mut PgConnection,
-    // ) -> QueryResult<Portefeuille> {
-    //     portefeuille::table
-    //         .filter(portefeuille::client_id.eq(client_id))
-    //         .first::<Portefeuille>(conn)}
-
     pub fn update_balance(
         conn: &mut PgConnection,
         portefeuille_id: i32,
@@ -73,13 +66,24 @@ impl Portefeuille {
         portefeuille::table.load::<Portefeuille>(conn)
     }
 
-    pub fn apply_deposit(
-        conn: &mut PgConnection,
+    // pub fn apply_deposit(
+    //     conn: &mut PgConnection,
+    //     portefeuille_id: i32,
+    //     amount: i32,
+    // ) -> QueryResult<Portefeuille> {
+    //     let portefeuille = Self::search_portefeuille_by_id(conn, portefeuille_id)?;
+    //     let new_balance = portefeuille.balance + amount;
+    //     Self::update_balance(conn, portefeuille_id, new_balance)
+    // }
+
+    pub fn approvisionner(
+                conn: &mut PgConnection,
         portefeuille_id: i32,
-        amount: i32,
-    ) -> QueryResult<Portefeuille> {
-        let portefeuille = Self::search_portefeuille_by_id(conn, portefeuille_id)?;
-        let new_balance = portefeuille.balance + amount;
-        Self::update_balance(conn, portefeuille_id, new_balance)
+        montant: i32,
+    ) -> QueryResult<usize> {
+        use crate::infrastructure::persistance::portefeuille::dsl::*;
+        diesel::update(portefeuille.filter(id.eq(portefeuille_id)))
+            .set(balance.eq(balance + montant))
+            .execute(conn)
     }
 }

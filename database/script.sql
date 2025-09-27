@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS public.clients
     name character varying(255) COLLATE pg_catalog."default",
     email character varying(255) COLLATE pg_catalog."default",
     phone character varying(20) COLLATE pg_catalog."default",
-    
+
     CONSTRAINT clients_pkey PRIMARY KEY (client_id)
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.account
     client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
     portefeuille_id INT NOT NULL REFERENCES portefeuille(id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL DEFAULT 'Pending', 
-
+    mfa_enable BOOLEAN NOT NULL DEFAULT false,
     CONSTRAINT accounts_pkey PRIMARY KEY (account_id),
     CONSTRAINT accounts_username_key UNIQUE (username)
 );

@@ -8,5 +8,6 @@ table! {
         client_id -> Integer,
         portefeuille_id -> Integer,
         status -> Varchar,
+        mfa_enabled -> Bool,
     }
 }

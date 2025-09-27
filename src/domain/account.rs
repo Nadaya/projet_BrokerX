@@ -16,6 +16,7 @@ pub struct Account {
     pub client_id: i32,
     pub portefeuille_id: i32,
     pub status : String,
+    pub mfa_enabled: bool,
 }
 
 #[derive(Insertable)]
@@ -26,6 +27,7 @@ pub struct NewAccount {
     pub client_id: i32,
     pub portefeuille_id: i32,
     pub status : String,
+    pub mfa_enabled: bool,
 
 }
 
@@ -39,6 +41,7 @@ impl Account {
         password: &str,
         client_id: i32,
         portefeuille_id: i32,
+        mfa_enabled: bool,
     ) -> QueryResult<Account> {
 
         let new_account = NewAccount {
@@ -47,6 +50,7 @@ impl Account {
             client_id,
             portefeuille_id,
             status : ("Pending").to_string(),
+            mfa_enabled,
         };
 
         diesel::insert_into(account::table)
