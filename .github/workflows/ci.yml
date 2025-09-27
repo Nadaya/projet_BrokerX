@@ -1,0 +1,28 @@
+name: CI
+
+on: 
+  push: 
+    branches: [main, master]
+  pull_request: 
+    branches: [main, master]
+
+jobs: 
+  lint: 
+     runs-on: ubuntu-latest
+     name: lint
+     steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint job
+        run: cargo clippy
+
+ 
+test: 
+    runs-on: ubuntu-latest
+    name: tests
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: tests job
+      run: cargo test
+

@@ -25,6 +25,7 @@ pub fn mfa_verif() -> bool {
             println!("Code incorrect (tentative {}/3)", attempts);
         }
     }
-        println!("Trop de tentatives échouées. Réessayez plus tard.");
-        return false;
+    println!("Trop de tentatives échouées. Réessayez plus tard.");
+    false
 }
+

@@ -1,7 +1,6 @@
 use diesel::PgConnection;
 use crate::domain::client::Client; 
 use crate::domain::account::Account;
-use crate::domain::portefeuille::Portefeuille;
 
 use std::io;
 use std::time::Duration;

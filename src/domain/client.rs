@@ -6,7 +6,7 @@ use diesel::{
 use crate::infrastructure::persistance::clients;
 
 // --- Structures ---
-
+#[allow(dead_code)]
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = clients)]
 pub struct Client {
@@ -15,7 +15,6 @@ pub struct Client {
     pub email: String,
     pub phone: String,
 }
-
 #[derive(Insertable)]
 #[diesel(table_name = clients)]
 pub struct NewClient {
@@ -24,10 +23,8 @@ pub struct NewClient {
     pub phone: String,
 }
 
-// --- Implémentations ---
 
 impl Client {
-    /* UC-01 : Create a client and check ID */
     pub fn create_client(
         conn: &mut PgConnection,
         name: &str,
@@ -44,30 +41,5 @@ impl Client {
         diesel::insert_into(clients::table)
             .values(&new_client)
             .get_result(conn)
-    }
-
-    pub fn search_client_by_id(
-        conn: &mut PgConnection,
-        client_id: i32,
-    ) -> QueryResult<Client> {
-        clients::table.find(client_id).first::<Client>(conn)
-    }
-
-    pub fn search_client_by_name(
-        conn: &mut PgConnection,
-        client_name: &str,
-    ) -> QueryResult<Vec<Client>> {
-
-        let pattern = format!("%{}%", client_name);
-        clients::table.filter(clients::name.ilike(pattern)).load::<Client>(conn)
-    }
-
-    pub fn search_client_by_email(
-        conn: &mut PgConnection,
-        client_email: &str,
-    ) -> QueryResult<Vec<Client>> {
-
-        let pattern = format!("%{}%", client_email);
-        clients::table.filter(clients::email.ilike(pattern)).load::<Client>(conn)
     }
 }
