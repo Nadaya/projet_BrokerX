@@ -43,7 +43,6 @@ Le système permet au client de :
 - Créer un compte
 - S'authentifier
 - Approvisionner son portfeuille
-- Faire des transaction 
 
 ## 3.2 Contexte technique
 - **Client** : *main.rs* - Application Rust CLI
@@ -66,7 +65,7 @@ Pour proposer une solution qui suit ses attentes la, les étapes d'implémentati
 Cette vue présente les principaux éléments métiers du système, ainsi que leurs relations.
 Dans cette première phase, on se concentre sur trois cas d’utilisation prioritaires : inscription, authentification et approvisionnement du portefeuille. Cela se traduit par deux grands ensembles : la gestion des clients et la gestion des portefeuilles.
 
-![Classes](images/diagramme_classes.png)
+![Classes](images/diag_classes.png)
 
 Ici, le client est l’élément central : il possède un compte pour s’authentifier et un portefeuille pour stocker ses fonds. Chaque portefeuille contient une suite de transactions qui permettent de retracer son historique.
 
@@ -181,8 +180,31 @@ On utilise Docker pour exécuter l’application et sa base de données.
 ![Deploiement](images/deploiement.png)
 
 ## 8. Concepts transversaux
-- ORM(diesel), DTO, Architecture hexagonal 
-- Persistance, base de donnée relationelle
+### 8.1 ORM(diesel)
+Un ORM (Object-Relational Mapping) comme Diesel en Rust permet de travailler avec la base de données PostgreSQL en utilisant des objets Rust au lieu d’écrire directement du SQL.
+- Cela rend le code plus sûr et moins sujet aux erreurs.
+- Les changements dans la base peuvent être suivis grâce aux migrations.
+- Le code métier n’a pas besoin de connaître les détails SQL.
+
+### 8.2 DTO 
+Les DTOs servent à transférer les données entre le cœur du programme et le reste (interface, stockage…).
+- Ils permettent de protéger certaines informations sensibles.
+- Ils simplifient l’envoi et la réception des données.
+
+Par exemple, pour afficher un client, on peut utiliser un DTO qui contient juste le nom et l’email, et pas le mot de passe.
+
+### 8.3 Architecture hexagonal 
+L’architecture hexagonale sépare clairement la logique métier (ce que fait la plateforme) des détails techniques (base de données, interface).
+- Le code métier est indépendant, ce qui facilite les tests et les modifications.
+- Les “adaptateurs” permettent de connecter la base ou l’interface sans toucher au cœur du programme.
+
+Exemple : l’authentification ou le dépôt d’argent se font dans le cœur, et PostgreSQL est juste un outil pour stocker les informations.
+
+### 8.4 Persistance et base de donnée relationnelle
+La base PostgreSQL est utilisée pour stocker toutes les informations importantes (clients, portefeuilles,...).
+- Elle garantit que les opérations importantes ne se perdent pas.
+- Les règles de la base empêchent les erreurs (ex : un portefeuille ne peut pas avoir un solde négatif).
+- Elle peut gérer plus de clients et plus de transactions si la plateforme grandit.
 
 ## 9. Décisions architecturales
 ### ADR-001 : Style d'architecture
@@ -305,3 +327,51 @@ Pas encore de couche API HTTP : la communication directe Rust → PostgreSQL sim
 | **PostgreSQL** | Système de gestion de base de données relationnelle. |
 | **Sécurité** | Mesures de protection des données et transactions des clients. |
 | **Testabilité** | Capacité à écrire et exécuter facilement des tests automatisés. |
+
+
+# Guide d'exploitation
+## Prérequis
+Avant de commencer, assurez-vous d’avoir installé Git, Docker, et Rust.
+Ces outils permettent de cloner le projet, exécuter l’application dans un conteneur et compiler. 
+
+- Logiciel :   
+    - Git
+    - Docker et Docker compose 
+    - Rust toolchain (version stable, inclut cargo)
+  
+Verifier l'installation : 
+- git --version 
+- docker --version 
+- cargo --version
+- 
+## Cloner le projet 
+Pour accéder à l'application, il faut cloner le projet. Pour cela utiliser la commande : 
+
+clone avec ssh :
+  - git clone git@github.com:Nadaya/projet_BrokerX.git
+  
+clone avec http : 
+  - git clone https://github.com/Nadaya/projet_BrokerX.git
+
+Enfin se placer dans le répertoire : **cd BorkerX**
+
+## Lancer l'application avec Docker
+Démarrer l'application et la base de donnée avec Docker : **docker compose up --build**
+
+Cela permet de lancer : 
+- db : POstgreSQL
+- application : binaire Rust compilé
+
+Enfin pour lancer l'application : 
+- docker exec -it rust_app /bin/sh 
+
+Cela affichera sur le terminal un menu interactif 
+
+## Exemple d'actions possible
+Une fois l'application lancé, vous pouvez faire les actions suivantes : 
+- Créer un espace client et donc un compte associé
+- Se login, une fois que votre compte est activé. Une fois connecté vous pouvez : 
+  - Afficher vos informations concernant le compte
+  - Approvisionner votre portefeuille
+- Supprimer son compte
+- Se déconnecter
