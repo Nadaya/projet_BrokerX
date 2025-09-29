@@ -5,7 +5,6 @@ use diesel::{
 };
 use crate::infrastructure::persistance::portefeuille;
 
-// --- Structures ---
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = portefeuille)]
 pub struct Portefeuille {
@@ -19,7 +18,6 @@ pub struct NewPortefeuille {
     pub balance: i32,
 }
 
-// --- Implémentations --- 
 impl Portefeuille {
     pub fn create_portefeuille(
         conn: &mut PgConnection,

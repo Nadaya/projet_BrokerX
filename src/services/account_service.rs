@@ -22,7 +22,6 @@ let mut name = String::new();
     println!("Téléphone : ");
     io::stdin().read_line(&mut phone).unwrap();
 
-    // Création du client
     let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
         .expect("Erreur lors de la création du client");
 
@@ -46,8 +45,8 @@ let mut name = String::new();
         conn,
         username.trim(),
         password.trim(),
-        client.client_id, // Lien avec le client créé
-        portefeuille.portefeuille_id,  // Lien avec le portefeuille créé
+        client.client_id, 
+        portefeuille.portefeuille_id,  
         mfa_enabled,
     ).expect("Erreur lors de la création du compte");
 

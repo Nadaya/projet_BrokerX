@@ -6,7 +6,6 @@
 // use chrono::NaiveDateTime;
 // use crate::traduction::transaction;
 
-// // --- Structures ---
 // #[derive(Queryable, Selectable)]
 // #[diesel(table_name = transaction)]
 // pub struct Transaction {
@@ -24,9 +23,7 @@
 //     pub transaction_date: NaiveDateTime,
 // }
 
-// // --- Implémentations ---
 // impl Transaction {  
-//     /* UC-03 : Create a transaction and check ID */
 //     pub fn create_transaction(
 //         conn: &mut PgConnection,
 //         portfeuille_id: i32,

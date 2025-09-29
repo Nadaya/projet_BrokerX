@@ -5,7 +5,6 @@ use diesel::{
 };
 use crate::infrastructure::persistance::account;
 
-// --- Structures ---
 #[allow(dead_code)]
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = account)]
@@ -34,7 +33,6 @@ pub struct NewAccount {
 // --- Implémentations ---
 
 impl Account {
-    /* UC-01 : Create an account and check ID */
     pub fn create_account(
         conn: &mut PgConnection,
         username: &str,
@@ -86,8 +84,8 @@ impl Account {
                         .first::<Account>(conn)
                         .optional()? 
             {
-                Some(acc) => Ok(Some(acc)),  // compte trouvé et password correct
-                None => Ok(None),    // compte non trouvé ou password incorrect
+                Some(acc) => Ok(Some(acc)), 
+                None => Ok(None),  
             }
     }
 

@@ -5,7 +5,6 @@ use diesel::{
 };
 use crate::infrastructure::persistance::clients;
 
-// --- Structures ---
 #[allow(dead_code)]
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = clients)]

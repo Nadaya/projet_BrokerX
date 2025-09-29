@@ -65,7 +65,7 @@ Pour proposer une solution qui suit ses attentes la, les étapes d'implémentati
 Cette vue présente les principaux éléments métiers du système, ainsi que leurs relations.
 Dans cette première phase, on se concentre sur trois cas d’utilisation prioritaires : inscription, authentification et approvisionnement du portefeuille. Cela se traduit par deux grands ensembles : la gestion des clients et la gestion des portefeuilles.
 
-![Classes](images/diag_classes.png)
+![Classes](images/diag_classe.png)
 
 Ici, le client est l’élément central : il possède un compte pour s’authentifier et un portefeuille pour stocker ses fonds. Chaque portefeuille contient une suite de transactions qui permettent de retracer son historique.
 
