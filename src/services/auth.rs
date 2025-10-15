@@ -1,7 +1,7 @@
 use diesel::PgConnection;
 use crate::domain::account::Account;
 use crate::services::mfa::*;
-use crate::ui::*;
+// use crate::ui::*;
 use std::io;
 
 
@@ -24,7 +24,7 @@ pub fn login(conn: &mut PgConnection) {
                 if account.mfa_enabled {
                     if mfa_verif(){
                         println!("Connexion réussie, bienvenue, {}.", account.username);
-                        display_log_menu(conn, account);
+                        // display_log_menu(conn, account);
                     }
                 }else{
                     println!("Connexion réussie, bienvenue, {}.", account.username);
