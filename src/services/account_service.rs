@@ -7,55 +7,90 @@ use std::time::Duration;
 use std::thread;
 
 
-pub fn create_client_and_account(conn: &mut PgConnection) {
-let mut name = String::new();
-    let mut email = String::new();
-    let mut phone = String::new();
-    let mut username = String::new();
-    let mut password = String::new();
+// pub fn create_client_and_account(conn: &mut PgConnection) {
+// let mut name = String::new();
+//     let mut email = String::new();
+//     let mut phone = String::new();
+//     let mut username = String::new();
+//     let mut password = String::new();
 
-    println!("--- Création d'un client ---");
-    println!("Nom : ");
-    io::stdin().read_line(&mut name).unwrap();
-    println!("Email : ");
-    io::stdin().read_line(&mut email).unwrap();
-    println!("Téléphone : ");
-    io::stdin().read_line(&mut phone).unwrap();
+//     println!("--- Création d'un client ---");
+//     println!("Nom : ");
+//     io::stdin().read_line(&mut name).unwrap();
+//     println!("Email : ");
+//     io::stdin().read_line(&mut email).unwrap();
+//     println!("Téléphone : ");
+//     io::stdin().read_line(&mut phone).unwrap();
 
-    let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
-        .expect("Erreur lors de la création du client");
+//     let client = Client::create_client(conn, name.trim(), email.trim(), phone.trim())
+//         .expect("Erreur lors de la création du client");
 
-    println!("Client créé ");
+//     println!("Client créé ");
 
-    println!("--- Création du compte lié ---");
-    println!("Username : ");
-    io::stdin().read_line(&mut username).unwrap();
-    println!("Password : ");
-    io::stdin().read_line(&mut password).unwrap();
+//     println!("--- Création du compte lié ---");
+//     println!("Username : ");
+//     io::stdin().read_line(&mut username).unwrap();
+//     println!("Password : ");
+//     io::stdin().read_line(&mut password).unwrap();
 
+//     let portefeuille = crate::domain::portefeuille::Portefeuille::create_portefeuille(conn, 0)
+//         .expect("Erreur lors de la création du portefeuille");
+
+//     println!("Souhaitez-vous activer l'authentification MFA ? (o/n) : ");
+//     let mut mfa_choice = String::new();
+//     io::stdin().read_line(&mut mfa_choice).unwrap();
+//     let mfa_enabled = mfa_choice.trim().eq_ignore_ascii_case("o");
+
+//     let account = Account::create_account(
+//         conn,
+//         username.trim(),
+//         password.trim(),
+//         client.client_id, 
+//         portefeuille.portefeuille_id,  
+//         mfa_enabled,
+//     ).expect("Erreur lors de la création du compte");
+
+//     println!("Compte créé - état Pending");
+//     thread::sleep(Duration::from_secs(4));
+
+//     Account::activate(conn, account.account_id).expect("Erreur lors de l'activation du compte");
+//     println!("Votre compte est maintenant Active");
+// }
+
+pub fn create_client_and_account(
+    conn: &mut PgConnection,
+    name: &str,
+    email: &str,
+    phone: &str,
+    username: &str,
+    password: &str,
+    mfa_enabled: bool,
+) -> Result<i32, String> {
+    // Création du client
+    let client = Client::create_client(conn, name, email, phone)
+        .map_err(|e| format!("Erreur client: {}", e))?;
+
+    // Création du portefeuille
     let portefeuille = crate::domain::portefeuille::Portefeuille::create_portefeuille(conn, 0)
-        .expect("Erreur lors de la création du portefeuille");
+        .map_err(|e| format!("Erreur portefeuille: {}", e))?;
 
-    println!("Souhaitez-vous activer l'authentification MFA ? (o/n) : ");
-    let mut mfa_choice = String::new();
-    io::stdin().read_line(&mut mfa_choice).unwrap();
-    let mfa_enabled = mfa_choice.trim().eq_ignore_ascii_case("o");
-
+    // Création du compte
     let account = Account::create_account(
         conn,
-        username.trim(),
-        password.trim(),
-        client.client_id, 
-        portefeuille.portefeuille_id,  
+        username,
+        password,
+        client.client_id,
+        portefeuille.portefeuille_id,
         mfa_enabled,
-    ).expect("Erreur lors de la création du compte");
+    ).map_err(|e| format!("Erreur compte: {}", e))?;
 
-    println!("Compte créé - état Pending");
-    thread::sleep(Duration::from_secs(4));
+    // Activation du compte
+    Account::activate(conn, account.account_id)
+        .map_err(|e| format!("Erreur activation: {}", e))?;
 
-    Account::activate(conn, account.account_id).expect("Erreur lors de l'activation du compte");
-    println!("Votre compte est maintenant Active");
+    Ok(account.account_id)
 }
+
 
 pub fn delete_account(conn: &mut PgConnection) {
     let mut username = String::new();
