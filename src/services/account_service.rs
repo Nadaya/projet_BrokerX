@@ -1,10 +1,9 @@
 use diesel::PgConnection;
 use crate::domain::client::Client; 
 use crate::domain::account::Account;
+use crate::services::db::get_conn;
 
 use std::io;
-use std::time::Duration;
-use std::thread;
 
 
 // pub fn create_client_and_account(conn: &mut PgConnection) {
@@ -58,7 +57,6 @@ use std::thread;
 // }
 
 pub fn create_client_and_account(
-    conn: &mut PgConnection,
     name: &str,
     email: &str,
     phone: &str,
@@ -66,17 +64,19 @@ pub fn create_client_and_account(
     password: &str,
     mfa_enabled: bool,
 ) -> Result<i32, String> {
+    let mut conn = get_conn();
+
     // Création du client
-    let client = Client::create_client(conn, name, email, phone)
+    let client = Client::create_client(&mut conn, name, email, phone)
         .map_err(|e| format!("Erreur client: {}", e))?;
 
     // Création du portefeuille
-    let portefeuille = crate::domain::portefeuille::Portefeuille::create_portefeuille(conn, 0)
+    let portefeuille = crate::domain::portefeuille::Portefeuille::create_portefeuille(&mut conn, 0)
         .map_err(|e| format!("Erreur portefeuille: {}", e))?;
 
     // Création du compte
     let account = Account::create_account(
-        conn,
+        &mut conn,
         username,
         password,
         client.client_id,
@@ -85,7 +85,7 @@ pub fn create_client_and_account(
     ).map_err(|e| format!("Erreur compte: {}", e))?;
 
     // Activation du compte
-    Account::activate(conn, account.account_id)
+    Account::activate(&mut conn, account.account_id)
         .map_err(|e| format!("Erreur activation: {}", e))?;
 
     Ok(account.account_id)

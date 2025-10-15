@@ -6,6 +6,28 @@ fn generate_otp() -> String {
     format!("{:06}", rng.random_range(0..1_000_000))
 }
 
+use std::collections::HashMap;
+use std::sync::Mutex;
+use lazy_static::lazy_static;
+
+lazy_static! {
+    pub static ref OTP_STORE: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
+}
+
+pub fn send_otp(username: &str) -> String {
+    let otp = generate_otp();
+    OTP_STORE.lock().unwrap().insert(username.to_string(), otp.clone());
+    otp
+}
+
+pub fn verify_otp(username: &str, otp: &str) -> bool {
+    if let Some(stored_otp) = OTP_STORE.lock().unwrap().get(username) {
+        stored_otp == otp
+    } else {
+        false
+    }
+}
+
 pub fn mfa_verif() -> bool {
     let otp = generate_otp();
     println!("[SIMULATION] Code OTP envoyé: {}", otp);
