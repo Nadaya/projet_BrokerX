@@ -1,4 +1,4 @@
-use axum::{Json, extract::Json as AxumJson};
+use axum::{Json};
 use serde::{Deserialize, Serialize};
 use crate::services::*;
 
@@ -8,7 +8,7 @@ pub struct LoginRequest{
     pub password: String, 
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize)]
 pub struct LoginResponse{
     pub message: String, 
     pub mfa_required: bool,
