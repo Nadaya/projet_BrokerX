@@ -18,3 +18,6 @@ lazy_static = "1.5.0"
 utoipa = "5.4.0"
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 base64 = "0.22.1"
+tracing = "0.1.41"
+tracing-subscriber = {version = "0.3.20", features = ["json"]}
+prometheus = "0.14.0"

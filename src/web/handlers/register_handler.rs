@@ -2,6 +2,7 @@ use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use crate::services::*;
 use utoipa::ToSchema;
+use tracing::{info, error};
 
 #[derive(Deserialize, ToSchema)]
 pub struct RegisterRequest {
@@ -27,9 +28,25 @@ pub struct RegisterResponse{
     )
 )]
 pub async fn register_user(Json(payload): Json<RegisterRequest>) -> (StatusCode, Json<RegisterResponse>) {
+    info!(action = "register user attemp", username = %payload.username, "Tentative de création de compte reçue");
+
 
     match account_service::create_client_and_account(&payload.name, &payload.email, &payload.phone, &payload.username, &payload.password, payload.mfa_enabled ) {
-        Ok(_) => (StatusCode::OK, Json(RegisterResponse { message: "Utilisateur enregistré".to_string() })),
-        Err(e) => (StatusCode::BAD_REQUEST, Json(RegisterResponse { message: format!("Erreur: {}", e) })),
+        Ok(_) => {
+            info!(action = "register_success", username = %payload.username, "Utilisateur enregistré avec succès");
+            (
+                StatusCode::OK, Json(RegisterResponse { 
+                    message: "Utilisateur enregistré".to_string() 
+                })
+            )
+        },
+        Err(e) => {
+            error!(action = "register_failed", username = %payload.username, error = %e, "Erreur lors de la création du compte");
+            (
+                StatusCode::BAD_REQUEST, Json(RegisterResponse { 
+                    message: format!("Erreur: {}", e) 
+                })
+            )
+        }   
     }
 }
