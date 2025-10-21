@@ -1,4 +1,4 @@
-use axum::{Router, routing::get, routing::post}; 
+use axum::{Router, routing::post}; 
 use crate::web::handlers::*;
 
 pub fn routes() -> Router{
@@ -8,4 +8,5 @@ pub fn routes() -> Router{
         .route("/api/v1/auth/login", post(login_user))
         .route ("/api/v1/wallet/deposit", post(deposit_funds))
         .route("/api/v1/wallet/balance", post(get_balance))
+        .route("/api/v1/account/delete", post(delete_account))
 }

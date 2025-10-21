@@ -35,6 +35,6 @@ pub struct BalanceResponse{
 pub async fn get_balance(Json(payload ): Json<BalanceRequest>) -> Json<BalanceResponse>{
     match account_service::voir_solde(&payload.username){
         Ok(balance) => Json(BalanceResponse { balance }),
-        Err(e) => Json(BalanceResponse { balance: -1 }), 
+        Err(_) => Json(BalanceResponse { balance: -1 }),
     }
 }

@@ -58,7 +58,7 @@ impl Account {
 
     pub fn delete_account(
         conn: &mut PgConnection,
-        usern: String,
+        usern: &str,
     ) -> QueryResult<usize> {
         use crate::infrastructure::persistance::account::dsl::*;
         let rows_deleted = diesel::delete(account.filter(username.eq(usern)))
