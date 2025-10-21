@@ -1,4 +1,4 @@
-use axum::{Json};
+use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use crate::services::*;
 
@@ -14,16 +14,16 @@ pub struct DeleteAccountResponse{
     pub message: String,
 }
 
-pub async fn delete_account(Json(payload): Json<DeleteAccountRequest>) -> Json<DeleteAccountResponse>{
+pub async fn delete_account(Json(payload): Json<DeleteAccountRequest>) -> (StatusCode, Json<DeleteAccountResponse>){
     match account_service::delete_account(&payload.username, &payload.password){
-        Ok(_) => Json(DeleteAccountResponse {
+        Ok(_) => (StatusCode::OK, Json(DeleteAccountResponse {
             success: true,
             message : format!("Compte {} supprimé avec succès", payload.username),
-        }),
-        Err(e) => Json(DeleteAccountResponse {
+        })),
+        Err(e) => (StatusCode::BAD_REQUEST, Json(DeleteAccountResponse {
             success : false,
             message: format!("Erreur lors de la suppression du compte {} : {}", payload.username, e),
-        })
+        }))
     }
 
 }

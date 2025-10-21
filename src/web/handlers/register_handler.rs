@@ -1,4 +1,4 @@
-use axum::{Json, extract::Json as AxumJson};
+use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use crate::services::*;
 
@@ -17,10 +17,10 @@ pub struct RegisterResponse{
     pub message: String,
 }
 
-pub async fn register_user(AxumJson(payload): AxumJson<RegisterRequest>) -> Json<RegisterResponse> {
+pub async fn register_user(Json(payload): Json<RegisterRequest>) -> (StatusCode, Json<RegisterResponse>) {
 
     match account_service::create_client_and_account(&payload.name, &payload.email, &payload.phone, &payload.username, &payload.password, payload.mfa_enabled ) {
-        Ok(_) => Json(RegisterResponse { message: "Utilisateur enregistré".to_string() }),
-        Err(e) => Json(RegisterResponse { message: format!("Erreur: {}", e) }),
+        Ok(_) => (StatusCode::OK, Json(RegisterResponse { message: "Utilisateur enregistré".to_string() })),
+        Err(e) => (StatusCode::BAD_REQUEST, Json(RegisterResponse { message: format!("Erreur: {}", e) })),
     }
 }

@@ -1,4 +1,4 @@
-use axum::{Json};
+use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use crate::services::*;
 
@@ -15,42 +15,42 @@ pub struct LoginResponse{
     pub success: bool,
 }
 
-pub async fn login_user(Json(payload): Json<LoginRequest>) -> Json<LoginResponse>{    
+pub async fn login_user(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<LoginResponse>){    
     match auth::login(&payload.username, &payload.password).await {
         Ok(Some(account)) => {
             if account.status != "Active" {
-                return Json(LoginResponse {
+                return (StatusCode::BAD_REQUEST,Json(LoginResponse {
                     success: false,
                     message: format!("Compte {} non actif (état: {})", account.username, account.status),
                     mfa_required: false,
-                });
+                }));
             }
             if account.mfa_enabled {
                 let otp = mfa::send_otp(&account.username);
                 println!("[SIMULATION] Code OTP envoyé à {}: {}", account.username, otp);
 
-                Json(LoginResponse {
+                (StatusCode::OK, Json(LoginResponse {
                     success: true,
                     message: "MFA requis. Un code OTP a été envoyé.".to_string(),
                     mfa_required: true,
-                })
+                }))
             }else{
-                Json(LoginResponse {
+                (StatusCode::OK, Json(LoginResponse {
                     success: true,
                     message: format!("Connexion réussie, bienvenue {}!", account.username),
                     mfa_required: false,
-                })
+                }))
             }
-        }Ok(None) => Json(LoginResponse {
+        }Ok(None) => (StatusCode::BAD_REQUEST, Json(LoginResponse {
             success: false,
             message: "Identifiants invalides".to_string(),
             mfa_required: false,
-        }),
-        Err(err) => Json(LoginResponse {
+        })),
+        Err(err) => (StatusCode::BAD_REQUEST, Json(LoginResponse {
             success: false,
             message: format!("Erreur lors du login: {}", err),
             mfa_required: false,
-        }),    
+        })),    
     }
 }
 
@@ -66,16 +66,16 @@ pub struct VerifyMfaResponse {
     pub message: String,
 }
 
-pub async fn verify_mfa_user(Json(payload): Json<VerifyMfaRequest>) -> Json<VerifyMfaResponse> {
+pub async fn verify_mfa_user(Json(payload): Json<VerifyMfaRequest>) -> (StatusCode, Json<VerifyMfaResponse>) {
     if mfa::verify_otp(&payload.username, &payload.otp) {
-        Json(VerifyMfaResponse {
+        (StatusCode::OK, Json(VerifyMfaResponse {
             success: true,
             message: "MFA vérifié, connexion réussie.".to_string(),
-        })
+        }))
     } else {
-        Json(VerifyMfaResponse {
+        (StatusCode::BAD_REQUEST, Json(VerifyMfaResponse {
             success: false,
             message: "Code OTP invalide ou expiré.".to_string(),
-        })
+        }))
     }
 }
