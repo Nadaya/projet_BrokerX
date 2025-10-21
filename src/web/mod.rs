@@ -15,6 +15,7 @@ pub async fn run() {
 
     let app: Router<()> = Router::new()
         .route("/", get(|| async { "🚀 BrokerX+ API est en ligne !" }))
+        .merge(routes::routes())
         .layer(cors);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));

@@ -89,4 +89,17 @@ impl Account {
             }
     }
 
+    pub fn get_by_username(
+        conn: &mut PgConnection,
+        usern: &str,
+    ) -> Result<Option<Account>, diesel::result::Error> {
+        use crate::infrastructure::persistance::account::dsl::*;
+        match account.filter(username.eq(usern))
+                        .first::<Account>(conn)
+                        .optional()? 
+            {
+                Some(acc) => Ok(Some(acc)), 
+                None => Ok(None),  
+            }
+    }
 }

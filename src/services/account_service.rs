@@ -1,6 +1,7 @@
 use diesel::PgConnection;
 use crate::domain::client::Client; 
 use crate::domain::account::Account;
+use crate::domain::{portefeuille::Portefeuille};
 use crate::services::db::get_conn;
 
 use std::io;
@@ -91,7 +92,6 @@ pub fn create_client_and_account(
     Ok(account.account_id)
 }
 
-
 pub fn delete_account(conn: &mut PgConnection) {
     let mut username = String::new();
 
@@ -114,44 +114,61 @@ pub fn delete_account(conn: &mut PgConnection) {
     }
 }
 
-pub fn voir_infos(conn: &mut PgConnection,account: &Account) {
-    println!("--- Informations du compte ---");
-    println!("Username: {}", account.username);
-    voir_solde(conn, account);
+// pub fn voir_solde(conn: &mut PgConnection, account: &Account) {
+//     match crate::domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
+//         Ok(portefeuille) => {
+//             println!("Solde actuel: {}", portefeuille.balance);
+//         }
+//         Err(_) => {
+//             println!("Portefeuille non trouvé pour ce client.");
+//         }
+//     }
+// }
+
+pub fn voir_solde(username : &str)-> Result<i32, String> {
+    let mut conn = get_conn();
+    let account = Account::get_by_username(&mut conn, username);
+
+    let portefeuille = Portefeuille::search_portefeuille_by_id(&mut conn, account.unwrap().unwrap().portefeuille_id)
+        .map_err(|e| format!("Portefeuille non trouvé"))?;
+
+    Ok(portefeuille.balance)
 }
 
-pub fn voir_solde(conn: &mut PgConnection, account: &Account) {
-    match crate::domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
-        Ok(portefeuille) => {
-            println!("Solde actuel: {}", portefeuille.balance);
-        }
-        Err(_) => {
-            println!("Portefeuille non trouvé pour ce client.");
-        }
-    }
-}
+// pub fn approvisionner(conn: &mut PgConnection, account: &Account) {
+//     println!("--- Approvisionner mon portefeuille ---");
+//     println!("Indiquer le montant à ajouter : ");
+//     let mut montant_str = String::new();
+//     io::stdin().read_line(&mut montant_str).unwrap();
+//     let montant: i32 = montant_str.trim().parse().unwrap_or(0);
 
-pub fn approvisionner(conn: &mut PgConnection, account: &Account) {
-    println!("--- Approvisionner mon portefeuille ---");
-    println!("Indiquer le montant à ajouter : ");
-    let mut montant_str = String::new();
-    io::stdin().read_line(&mut montant_str).unwrap();
-    let montant: i32 = montant_str.trim().parse().unwrap_or(0);
+//     if montant < 0 {
+//         println!("Montant invalide.")
+//     }else{
+//         match crate::domain::portefeuille::Portefeuille::approvisionner(conn, account.portefeuille_id, montant) {
+//             Ok(_) => {
+//                 println!("Portefeuille crédité de {}.", montant);
+//                 match crate::domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
+//                     Ok(portefeuille) => println!("Nouveau solde: {}", portefeuille.balance),
+//                     Err(_) => println!("Erreur lors de la récupération du portefeuille."),
+//                 }
+//             }
+//             Err(err) => {
+//                 println!("Erreur lors de l'approvisionnement: {}", err);
+//             }
+//         }
+//     }
+// }
 
-    if montant < 0 {
-        println!("Montant invalide.")
-    }else{
-        match crate::domain::portefeuille::Portefeuille::approvisionner(conn, account.portefeuille_id, montant) {
-            Ok(_) => {
-                println!("Portefeuille crédité de {}.", montant);
-                match crate::domain::portefeuille::Portefeuille::search_portefeuille_by_id(conn, account.portefeuille_id) {
-                    Ok(portefeuille) => println!("Nouveau solde: {}", portefeuille.balance),
-                    Err(_) => println!("Erreur lors de la récupération du portefeuille."),
-                }
-            }
-            Err(err) => {
-                println!("Erreur lors de l'approvisionnement: {}", err);
-            }
-        }
+
+pub async fn approvisionner(username: &str, amount: i32) -> Result<(), String> {
+    let mut conn = get_conn();
+    let account = Account::get_by_username(&mut conn, username); // récupère le compte
+    if amount < 0 {
+        return Err("Montant invalide.".to_string());
     }
+
+    Portefeuille::approvisionner(&mut conn, account.unwrap().unwrap().portefeuille_id, amount)
+        .map_err(|e| format!("Erreur lors de l'approvisionnement: {}", e))?;
+    Ok(())
 }

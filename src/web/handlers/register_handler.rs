@@ -19,7 +19,7 @@ pub struct RegisterResponse{
 
 pub async fn register_user(AxumJson(payload): AxumJson<RegisterRequest>) -> Json<RegisterResponse> {
 
-    match account_service::create_client_and_account(&payload.username, &payload.password, &payload.email, &payload.phone, &payload.name, payload.mfa_enabled ) {
+    match account_service::create_client_and_account(&payload.name, &payload.email, &payload.phone, &payload.username, &payload.password, payload.mfa_enabled ) {
         Ok(_) => Json(RegisterResponse { message: "Utilisateur enregistré".to_string() }),
         Err(e) => Json(RegisterResponse { message: format!("Erreur: {}", e) }),
     }
