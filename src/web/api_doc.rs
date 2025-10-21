@@ -33,6 +33,9 @@ use crate::web::handlers::__path_deposit_funds;
     tags(
         (name = "Accounts", description = "Endpoints pour la gestion des comptes"),
         (name = "Wallet", description = "Endpoints pour les portefeuilles et transactions")
+    ),
+    security(
+        ("basicAuth" = [])
     )
 )]
 pub struct ApiDoc;

@@ -3,7 +3,7 @@ use tower_http::cors::{CorsLayer, Any};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use axum::middleware;
-use crate::services::auth2::basic_auth;
+use crate::services::auth_middleware::basic_auth;
 
 pub mod routes;
 pub mod handlers;
