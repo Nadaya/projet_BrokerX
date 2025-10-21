@@ -2,6 +2,8 @@ use axum::{Router, routing::get, serve};
 use tower_http::cors::{CorsLayer, Any};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
+use axum::middleware;
+use crate::services::auth2::basic_auth;
 
 pub mod routes;
 pub mod handlers;
@@ -18,6 +20,7 @@ pub async fn run() {
     let app: Router<()> = Router::new()
         .route("/", get(|| async { "🚀 BrokerX+ API est en ligne !" }))
         .merge(routes::routes())
+        .layer(middleware::from_fn(basic_auth))
         .layer(cors);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
