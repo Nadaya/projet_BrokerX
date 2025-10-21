@@ -1,20 +1,29 @@
 use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use crate::services::*;
+use utoipa::ToSchema;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct LoginRequest{
     pub username: String, 
     pub password: String, 
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 pub struct LoginResponse{
     pub message: String, 
     pub mfa_required: bool,
     pub success: bool,
 }
 
+#[utoipa::path(
+    post,
+    path = "/login",
+    request_body = LoginRequest,
+    responses(
+        (status = 200, description = "Connexion réussie")
+    )
+)]
 pub async fn login_user(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<LoginResponse>){    
     match auth::login(&payload.username, &payload.password).await {
         Ok(Some(account)) => {
@@ -54,18 +63,26 @@ pub async fn login_user(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct VerifyMfaRequest {
     pub username: String,
     pub otp: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 pub struct VerifyMfaResponse {
     pub success: bool,
     pub message: String,
 }
 
+#[utoipa::path(
+    post,
+    path = "/verify_mfa",
+    request_body = VerifyMfaRequest,
+    responses(
+        (status = 200, description = "Vérification MFA réussie")
+    )
+)]
 pub async fn verify_mfa_user(Json(payload): Json<VerifyMfaRequest>) -> (StatusCode, Json<VerifyMfaResponse>) {
     if mfa::verify_otp(&payload.username, &payload.otp) {
         (StatusCode::OK, Json(VerifyMfaResponse {

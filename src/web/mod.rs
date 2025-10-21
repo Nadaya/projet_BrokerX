@@ -5,6 +5,8 @@ use tokio::net::TcpListener;
 
 pub mod routes;
 pub mod handlers;
+pub mod api_doc;
+
 
 pub async fn run() {
 
