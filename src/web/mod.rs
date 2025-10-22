@@ -9,6 +9,16 @@ pub mod routes;
 pub mod handlers;
 pub mod api_doc;
 
+use prometheus::Encoder;
+
+async fn metrics_handler() -> String {
+    let encoder = prometheus::TextEncoder::new();
+    let metric_families = prometheus::gather();
+    let mut buffer = vec![];
+    encoder.encode(&metric_families, &mut buffer).unwrap();
+    String::from_utf8(buffer).unwrap()
+}
+
 
 pub async fn run() {
 
@@ -19,6 +29,7 @@ pub async fn run() {
 
     let app: Router<()> = Router::new()
         .route("/", get(|| async { "🚀 BrokerX+ API est en ligne !" }))
+        .route("/metrics", get(metrics_handler))
         .merge(routes::routes())
         .layer(middleware::from_fn(basic_auth))
         .layer(cors);
