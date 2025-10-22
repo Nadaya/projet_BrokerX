@@ -35,7 +35,7 @@ pub async fn deposit_funds(Json(payload): Json<DepositRequest>) -> (StatusCode, 
 
     info!(action = "deposit_attempt", username = %payload.username, amount = payload.amount, "Tentative de dépôt reçue");
 
-    let res = account_service::approvisionner(&payload.username, payload.amount).await;
+    let res = portefeuille_service::approvisionner(&payload.username, payload.amount).await;
 
     match &res {
         Ok(_) => info!(action = "deposit_success", username = %payload.username, amount = payload.amount, "Dépôt effectué avec succès"),
@@ -85,7 +85,7 @@ pub async fn get_balance(Json(payload ): Json<BalanceRequest>) -> (StatusCode, J
 
     info!(action = "balance_check", username = %payload.username, "Demande de solde reçue");
 
-    let res = account_service::voir_solde(&payload.username);
+    let res = portefeuille_service::voir_solde(&payload.username);
 
     match &res {
         Ok(balance) => info!(action = "balance_success", username = %payload.username, balance = *balance, "Solde récupéré avec succès"),
