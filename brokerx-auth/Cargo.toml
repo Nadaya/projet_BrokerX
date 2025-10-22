@@ -1,0 +1,12 @@
+[package]
+name = "brokerx-auth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.8.6"
+tokio = { version = "1", features = ["full"] }
+base64 = "0.22.1"
+brokerx-types = { path = "../brokerx-types" }
+
+reqwest = {version = "0.12.24", features = ["json"]}

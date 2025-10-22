@@ -18,7 +18,7 @@ async fn main(){
         .with_max_level(Level::INFO)
         .init();
 
-    info!(action = "startup", service = "BrokerX+", "Service démarré");
+    info!(action = "startup", service = "Account-service", "Service démarré");
 
 
     web::run().await;
