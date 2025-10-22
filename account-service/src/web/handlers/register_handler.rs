@@ -1,7 +1,7 @@
 use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
-use crate::services::*;
-use crate::services::metrics::{HTTP_REQ_COUNTER, HTTP_REQ_HISTOGRAM, HTTP_ERR_COUNTER};
+use crate::service::*;
+use crate::service::metrics::{HTTP_REQ_COUNTER, HTTP_REQ_HISTOGRAM, HTTP_ERR_COUNTER};
 use utoipa::ToSchema;
 use tracing::{info, error};
 use prometheus::HistogramTimer;
@@ -46,7 +46,7 @@ pub async fn register_user(Json(payload): Json<RegisterRequest>) -> (StatusCode,
         &payload.username,
         &payload.password,
         payload.mfa_enabled,
-    );
+    ).await;
 
     match &res {
         Ok(_) => info!(action = "register_success", username = %payload.username, "Utilisateur enregistré avec succès"),
@@ -58,7 +58,7 @@ pub async fn register_user(Json(payload): Json<RegisterRequest>) -> (StatusCode,
 
     timer.observe_duration();
 
-    match res {
+    match res{
         Ok(_) => (StatusCode::CREATED, Json(RegisterResponse { 
             message: "Utilisateur enregistré".to_string() 
         })),

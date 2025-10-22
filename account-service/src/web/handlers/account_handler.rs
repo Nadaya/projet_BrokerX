@@ -1,7 +1,7 @@
 use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
-use crate::services::*;
-use crate::services::metrics::{HTTP_REQ_COUNTER, HTTP_REQ_HISTOGRAM, HTTP_ERR_COUNTER};
+use crate::service::*;
+use crate::service::metrics::{HTTP_REQ_COUNTER, HTTP_REQ_HISTOGRAM, HTTP_ERR_COUNTER};
 use utoipa::ToSchema;
 use tracing::{info, error};
 use prometheus::HistogramTimer;

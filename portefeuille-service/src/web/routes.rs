@@ -9,6 +9,7 @@ pub fn routes() -> Router{
 
         .route ("/api/v1/wallet/deposit", post(deposit_funds))
         .route("/api/v1/wallet/balance", post(get_balance))
+        .route("/api/v1/wallet/create", post(create_portefeuille))
         // Swagger UI
         .merge(
             SwaggerUi::new("/swagger-ui")

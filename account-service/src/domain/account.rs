@@ -4,7 +4,10 @@ use diesel::{
     QueryResult,
 }; 
 
-use crate::infrastructure::persistance::account;
+// Importer le DSL généré par Diesel pour la table `account`
+// use crate::infrastructure::persistance::account::dsl::*;
+use crate::infrastructure::persistance::account_model::account;
+use crate::infrastructure::persistance::account_model::account::dsl::*; 
 
 #[allow(dead_code)]
 #[derive(Queryable, Selectable)]
@@ -15,7 +18,7 @@ pub struct Account {
     pub password: String,
     pub client_id: i32,
     pub portefeuille_id: i32,
-    pub status : String,
+    pub status: String,
     pub mfa_enabled: bool,
 }
 
@@ -26,81 +29,74 @@ pub struct NewAccount {
     pub password: String,
     pub client_id: i32,
     pub portefeuille_id: i32,
-    pub status : String,
+    pub status: String,
     pub mfa_enabled: bool,
-
 }
 
 // --- Implémentations ---
-
 impl Account {
+    // Créer un compte
     pub fn create_account(
         conn: &mut PgConnection,
-        username: &str,
-        password: &str,
-        client_id: i32,
-        portefeuille_id: i32,
-        mfa_enabled: bool,
+        user_name: &str,
+        user_password: &str,
+        client_id_value: i32,
+        portefeuille_id_value: i32,
+        mfa_enabled_value: bool
     ) -> QueryResult<Account> {
 
         let new_account = NewAccount {
-            username: username.to_string(),
-            password: password.to_string(),
-            client_id,
-            portefeuille_id,
-            status : ("Pending").to_string(),
-            mfa_enabled,
+            username: user_name.to_string(),
+            password: user_password.to_string(),
+            client_id: client_id_value,
+            portefeuille_id: portefeuille_id_value,
+            status: "Pending".to_string(),
+            mfa_enabled: mfa_enabled_value,
         };
 
-        diesel::insert_into(account::table)
+        diesel::insert_into(account)
             .values(&new_account)
             .get_result(conn)
     }
 
+    // Supprimer un compte
     pub fn delete_account(
         conn: &mut PgConnection,
         usern: &str,
     ) -> QueryResult<usize> {
-        use crate::infrastructure::persistance::account::dsl::*;
-        let rows_deleted = diesel::delete(account.filter(username.eq(usern)))
-            .execute(conn)?;
-        Ok(rows_deleted)
+        diesel::delete(account.filter(username.eq(usern)))
+            .execute(conn)
     }
 
-    pub fn activate(conn: &mut PgConnection, _account_id: i32) -> QueryResult<usize> {
-        use crate::infrastructure::persistance::account::dsl::*;
-        diesel::update(account.filter(account_id.eq(_account_id)))
+    // Activer un compte
+    pub fn activate(
+        conn: &mut PgConnection,
+        account_id_value: i32,
+    ) -> QueryResult<usize> {
+        diesel::update(account.filter(account_id.eq(account_id_value)))
             .set(status.eq("Active"))
             .execute(conn)
     }
 
+    // Connexion (login)
     pub fn login(
         conn: &mut PgConnection, 
         usern: &str, 
         passw: &str,
-    ) -> Result<Option<Account>, diesel::result::Error> {
-        use crate::infrastructure::persistance::account::dsl::*;
-        match account.filter(username.eq(usern))
-                        .filter(password.eq(passw))
-                        .first::<Account>(conn)
-                        .optional()? 
-            {
-                Some(acc) => Ok(Some(acc)), 
-                None => Ok(None),  
-            }
+    ) -> QueryResult<Option<Account>> {
+        account.filter(username.eq(usern))
+               .filter(password.eq(passw))
+               .first::<Account>(conn)
+               .optional()
     }
 
+    // Récupérer un compte par username
     pub fn get_by_username(
         conn: &mut PgConnection,
         usern: &str,
-    ) -> Result<Option<Account>, diesel::result::Error> {
-        use crate::infrastructure::persistance::account::dsl::*;
-        match account.filter(username.eq(usern))
-                        .first::<Account>(conn)
-                        .optional()? 
-            {
-                Some(acc) => Ok(Some(acc)), 
-                None => Ok(None),  
-            }
+    ) -> QueryResult<Option<Account>> {
+        account.filter(username.eq(usern))
+               .first::<Account>(conn)
+               .optional()
     }
 }

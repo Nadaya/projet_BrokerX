@@ -1,6 +1,6 @@
 mod domain;
 mod infrastructure;
-mod services;
+mod service;
 mod web;
 
 use tracing::{info};

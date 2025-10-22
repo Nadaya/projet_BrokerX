@@ -14,6 +14,7 @@ dependencies = [
  "lazy_static",
  "prometheus",
  "rand",
+ "reqwest",
  "serde",
  "serde_json",
  "tokio",

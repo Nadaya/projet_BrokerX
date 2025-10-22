@@ -1,3 +1,0 @@
-
-mod transaction_model;
- 

@@ -1,5 +1,5 @@
 
-use crate::services::db::get_conn;
+use crate::service::db::get_conn;
 use crate::domain::account::Account;
 
 pub async fn login(username: &str, password: &str) -> Result<std::option::Option<Account>, std::string::String>  {

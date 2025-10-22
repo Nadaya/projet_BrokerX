@@ -6,7 +6,7 @@ use axum::{
 };
 use base64::engine::general_purpose;
 use base64::Engine;
-use crate::services::login;
+use crate::service::login;
 
 pub async fn basic_auth(req: Request<Body>, next: Next) -> Result<Response, (axum::http::StatusCode, String)> {
     if let Some(auth_header) = req.headers().get("authorization") {

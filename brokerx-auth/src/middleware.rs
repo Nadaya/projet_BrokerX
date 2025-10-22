@@ -12,7 +12,7 @@ use reqwest::Client;
 /// Middleware pour l'authentification Basic Auth
 pub async fn basic_auth(
     req: Request<Body>,
-    next: Next<Body>,
+    next: Next,
 ) -> Result<Response, (axum::http::StatusCode, String)> {
     if let Some(auth_header) = req.headers().get("authorization") {
         if let Ok(auth_str) = auth_header.to_str() {

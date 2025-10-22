@@ -1,8 +1,16 @@
 use crate::domain::client::Client; 
 use crate::domain::account::Account;
-use crate::services::db::get_conn;
+use crate::service::db::get_conn;
+use reqwest::Client as HttpClient;
+use serde::{Deserialize};
 
-pub fn create_client_and_account(
+
+#[derive(Deserialize)]
+struct PortefeuilleResponse {
+    portefeuille_id: i32,
+}
+
+pub async fn create_client_and_account(
     name: &str,
     email: &str,
     phone: &str,
@@ -17,8 +25,22 @@ pub fn create_client_and_account(
         .map_err(|e| format!("Erreur client: {}", e))?;
 
     // Création du portefeuille
-    let portefeuille = crate::domain::portefeuille::Portefeuille::create_portefeuille(&mut conn, 0)
-        .map_err(|e| format!("Erreur portefeuille: {}", e))?;
+    let portfeuille = HttpClient::new();
+    let resp =  portfeuille
+        .post("http://portefeuille-service:8080/api/v1/wallet/create")
+        .send()
+        .await
+        .map_err(|e| format!("Erreur appel portefeuille-service: {}", e))?;
+
+
+    if !resp.status().is_success() {
+        return Err(format!("Erreur lors de la création du portefeuille: {}", resp.status()));
+    }
+
+    let portefeuille: PortefeuilleResponse = resp
+        .json()
+        .await
+        .map_err(|e| format!("Erreur parsing JSON portefeuille: {}", e))?;
 
     // Création du compte
     let account = Account::create_account(
