@@ -6,7 +6,7 @@ use axum::{
 };
 use base64::engine::general_purpose;
 use base64::Engine;
-use crate::services::auth;
+use crate::services::login;
 
 pub async fn basic_auth(req: Request<Body>, next: Next) -> Result<Response, (axum::http::StatusCode, String)> {
     if let Some(auth_header) = req.headers().get("authorization") {
@@ -20,7 +20,7 @@ pub async fn basic_auth(req: Request<Body>, next: Next) -> Result<Response, (axu
                             let username = parts[0];
                             let password = parts[1];
 
-                            match auth::login(username, password).await {
+                            match login::login(username, password).await {
                                 Ok(Some(_account)) => {
                                     // Auth réussie, on continue
                                     return Ok(next.run(req).await);
