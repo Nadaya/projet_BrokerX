@@ -9,6 +9,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - brokerx-net
 
   app:
     build: .
@@ -18,8 +20,11 @@ services:
     env_file: .env_docker
     stdin_open: true
     tty: true
+    networks:
+      - brokerx-net
     depends_on:
       - db
+
 
   prometheus:
     image: prom/prometheus:latest

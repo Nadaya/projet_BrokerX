@@ -27,11 +27,14 @@ pub async fn run() {
         .allow_methods(Any)
         .allow_headers(Any);
 
+    // Routes protégées par basic_auth
+    let protected_routes = routes::routes()
+        .layer(middleware::from_fn(basic_auth));
+
     let app: Router<()> = Router::new()
         .route("/", get(|| async { "🚀 BrokerX+ API est en ligne !" }))
         .route("/metrics", get(metrics_handler))
-        .merge(routes::routes())
-        .layer(middleware::from_fn(basic_auth))
+        .merge(protected_routes)
         .layer(cors);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
