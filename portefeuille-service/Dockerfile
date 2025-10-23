@@ -4,8 +4,9 @@ FROM rustlang/rust:nightly AS builder
 WORKDIR /usr/src/portefeuille-service
 
 # Copier les manifests du microservice
-COPY Cargo.toml ./
-COPY src ./src
+# COPY Cargo.toml ./
+# COPY src ./src
+COPY . .
 
 # Compiler en release
 RUN cargo build --release
@@ -18,8 +19,8 @@ RUN apt-get update && apt-get install -y libpq-dev libssl-dev ca-certificates &&
 WORKDIR /app
 
 # Copier le binaire compilé
-COPY --from=builder /usr/src/account-service/target/release/portefeuille-service /app/app
+COPY --from=builder /usr/src/account-service/target/release/portefeuille-service .
 
 EXPOSE 8081
 
-CMD ["/app/app"]
+CMD ["./portefeuille-service"]

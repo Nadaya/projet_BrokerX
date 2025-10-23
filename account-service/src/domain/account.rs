@@ -4,8 +4,6 @@ use diesel::{
     QueryResult,
 }; 
 
-// Importer le DSL généré par Diesel pour la table `account`
-// use crate::infrastructure::persistance::account::dsl::*;
 use crate::infrastructure::persistance::account;
 
 #[allow(dead_code)]
