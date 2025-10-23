@@ -3,7 +3,10 @@ pub mod account {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct Account {
+        pub account_id: i32,
         pub username: String,
+        pub password: String,
+        pub client_id: i32,
         pub portefeuille_id: i32,
         pub status: String,
         pub mfa_enabled: bool,

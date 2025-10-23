@@ -2,13 +2,7 @@ use crate::domain::client::Client;
 use crate::domain::account::Account;
 use crate::service::db::get_conn;
 use reqwest::Client as HttpClient;
-use serde::{Deserialize};
-
-
-#[derive(Deserialize)]
-struct PortefeuilleResponse {
-    portefeuille_id: i32,
-}
+use brokerx_types::portefeuille::Portefeuille;
 
 pub async fn create_client_and_account(
     name: &str,
@@ -37,7 +31,7 @@ pub async fn create_client_and_account(
         return Err(format!("Erreur lors de la création du portefeuille: {}", resp.status()));
     }
 
-    let portefeuille: PortefeuilleResponse = resp
+    let portefeuille: Portefeuille = resp
         .json()
         .await
         .map_err(|e| format!("Erreur parsing JSON portefeuille: {}", e))?;
@@ -48,7 +42,7 @@ pub async fn create_client_and_account(
         username,
         password,
         client.client_id,
-        portefeuille.portefeuille_id,
+        portefeuille.id,
         mfa_enabled,
     ).map_err(|e| format!("Erreur compte: {}", e))?;
 

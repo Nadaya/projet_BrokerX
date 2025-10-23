@@ -6,8 +6,7 @@ use diesel::{
 
 // Importer le DSL généré par Diesel pour la table `account`
 // use crate::infrastructure::persistance::account::dsl::*;
-use crate::infrastructure::persistance::account_model::account;
-use crate::infrastructure::persistance::account_model::account::dsl::*; 
+use crate::infrastructure::persistance::account;
 
 #[allow(dead_code)]
 #[derive(Queryable, Selectable)]
@@ -53,7 +52,7 @@ impl Account {
             status: "Pending".to_string(),
             mfa_enabled: mfa_enabled_value,
         };
-
+        use crate::infrastructure::persistance::account::dsl::*;
         diesel::insert_into(account)
             .values(&new_account)
             .get_result(conn)
@@ -64,6 +63,7 @@ impl Account {
         conn: &mut PgConnection,
         usern: &str,
     ) -> QueryResult<usize> {
+        use crate::infrastructure::persistance::account::dsl::*;
         diesel::delete(account.filter(username.eq(usern)))
             .execute(conn)
     }
@@ -73,6 +73,7 @@ impl Account {
         conn: &mut PgConnection,
         account_id_value: i32,
     ) -> QueryResult<usize> {
+        use crate::infrastructure::persistance::account::dsl::*;
         diesel::update(account.filter(account_id.eq(account_id_value)))
             .set(status.eq("Active"))
             .execute(conn)
@@ -84,6 +85,7 @@ impl Account {
         usern: &str, 
         passw: &str,
     ) -> QueryResult<Option<Account>> {
+        use crate::infrastructure::persistance::account::dsl::*;
         account.filter(username.eq(usern))
                .filter(password.eq(passw))
                .first::<Account>(conn)
@@ -95,6 +97,7 @@ impl Account {
         conn: &mut PgConnection,
         usern: &str,
     ) -> QueryResult<Option<Account>> {
+        use crate::infrastructure::persistance::account::dsl::*;
         account.filter(username.eq(usern))
                .first::<Account>(conn)
                .optional()

@@ -26,6 +26,8 @@
 members = [
     "account-service",
     "portefeuille-service",
+    "brokerx-auth",
+    "brokerx-types"
     #"." 
 ]
 

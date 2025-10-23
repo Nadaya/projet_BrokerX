@@ -11,19 +11,41 @@ services:
       - ./database:/docker-entrypoint-initdb.d
     networks:
       - brokerx-net
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U brokerx"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
-  app:
-    build: .
-    container_name: rust_app
+  account-service:
+      build:
+        context: ./account-service
+        dockerfile: Dockerfile
+      container_name: account_service
+      ports:
+        - "8080:8080"
+      env_file: .env_docker
+      networks:
+        - brokerx-net
+      depends_on:
+        db:
+          condition: service_healthy
+
+  portefeuille-service:
+    build:
+      context: ./portefeuille-service
+      dockerfile: Dockerfile
+    container_name: portefeuille_service
     ports:
-      - "8080:8080"
+      - "8081:8080"
     env_file: .env_docker
-    stdin_open: true
-    tty: true
     networks:
       - brokerx-net
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      account-service:
+        condition: service_started
 
 
   prometheus:
@@ -38,7 +60,8 @@ services:
     networks:
       - brokerx-net
     depends_on:
-      - app
+      - account-service
+      - portefeuille-service
 
   grafana:
     image: grafana/grafana:9.5.0
