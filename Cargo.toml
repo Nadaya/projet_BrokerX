@@ -1,9 +1,9 @@
 [workspace]
 members = [
-    "account-service",
-    "portefeuille-service",
     "brokerx-auth",
-    "brokerx-types"
+    "brokerx-types",
+    "account-service",
+    "portefeuille-service"
 ]
 
 [workspace.dependencies]

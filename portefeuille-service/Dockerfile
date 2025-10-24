@@ -1,11 +1,9 @@
 # Étape 1 : Builder le microservice account-service
 FROM rustlang/rust:nightly AS builder
 
-WORKDIR /usr/src/portefeuille-service
+WORKDIR /portefeuille-service
 
 # Copier les manifests du microservice
-# COPY Cargo.toml ./
-# COPY src ./src
 COPY . .
 
 # Compiler en release
@@ -16,10 +14,10 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y libpq-dev libssl-dev ca-certificates && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /portefeuille-service
 
 # Copier le binaire compilé
-COPY --from=builder /usr/src/account-service/target/release/portefeuille-service .
+COPY --from=builder /portefeuille-service/target/release/portefeuille-service .
 
 EXPOSE 8081
 

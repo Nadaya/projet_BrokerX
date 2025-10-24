@@ -1,11 +1,10 @@
 # Étape 1 : Builder le microservice account-service
 FROM rustlang/rust:nightly AS builder
 
-WORKDIR /usr/src/account-service
+WORKDIR /account-service
 
 # Copier les manifests du microservice
-COPY Cargo.toml ./
-COPY src ./src
+COPY . .
 
 # Compiler en release
 RUN cargo build --release
@@ -15,10 +14,10 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y libpq-dev libssl-dev ca-certificates && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /account-service
 
 # Copier le binaire compilé
-COPY --from=builder /usr/src/account-service/target/release/account-service /app/app
+COPY --from=builder /account-service/target/release/account-service /app/app
 
 EXPOSE 8080
 

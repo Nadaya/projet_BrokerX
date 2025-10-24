@@ -12,15 +12,15 @@ services:
     networks:
       - brokerx-net
     healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U brokerx"]
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
         interval: 10s
         timeout: 5s
         retries: 5
 
   account-service:
       build:
-        context: ./account-service
-        dockerfile: Dockerfile
+        context: .
+        dockerfile: ./account-service/Dockerfile
       container_name: account_service
       ports:
         - "8080:8080"
@@ -33,8 +33,8 @@ services:
 
   portefeuille-service:
     build:
-      context: ./portefeuille-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./portefeuille-service/Dockerfile
     container_name: portefeuille_service
     ports:
       - "8081:8080"
