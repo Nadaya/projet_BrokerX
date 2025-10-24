@@ -37,7 +37,7 @@ services:
       dockerfile: ./portefeuille-service/Dockerfile
     container_name: portefeuille_service
     ports:
-      - "8081:8080"
+      - "8081:8081"
     env_file: .env_docker
     networks:
       - brokerx-net

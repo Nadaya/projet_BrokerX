@@ -37,7 +37,7 @@ pub async fn run() {
         .merge(protected_routes)
         .layer(cors);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8081));
     println!("HTTP server launched on http://{}", addr);
 
     // Lancement du serveur

@@ -5,6 +5,7 @@ members = [
     "account-service",
     "portefeuille-service"
 ]
+resolver = "1"
 
 [workspace.dependencies]
 chrono = "0.4.42"
