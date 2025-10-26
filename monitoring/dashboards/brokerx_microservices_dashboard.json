@@ -1,0 +1,66 @@
+{
+  "id": null,
+  "title": "BrokerX Microservices Monitoring",
+  "tags": ["rust", "microservices", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Uptime - Account Service",
+      "targets": [
+        {
+          "expr": "up{job=\"account-service\"}",
+          "legendFormat": "Account Service"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4}
+    },
+    {
+      "type": "stat",
+      "title": "Uptime - Portefeuille Service",
+      "targets": [
+        {
+          "expr": "up{job=\"portefeuille-service\"}",
+          "legendFormat": "Portefeuille Service"
+        }
+      ],
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4}
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests per Second",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{job}}"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 6}
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Request Duration (seconds)",
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_sum[1m]) / rate(http_request_duration_seconds_count[1m])",
+          "legendFormat": "{{job}}"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 10, "w": 12, "h": 6}
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate (5xx)",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{status=~\"5..\"}[5m]) / rate(http_requests_total[5m])",
+          "legendFormat": "{{job}}"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 16, "w": 12, "h": 6}
+    }
+  ]
+}

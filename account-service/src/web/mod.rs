@@ -9,6 +9,8 @@ use brokerx_auth::middleware::basic_auth;
 pub mod routes;
 pub mod handlers;
 pub mod api_doc;
+pub mod metrics;
+
 
 use prometheus::Encoder;
 
