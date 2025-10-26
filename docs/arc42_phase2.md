@@ -80,6 +80,27 @@ Ainsi 2 bases de données sont gérées :
 ### 5.2 Diagramme de paquetage
 ![Paquetage](images/diagramme_paquetage_phase2.png)
 
+Le diagramme de paquetage présente la structure logique du système en microservices et la répartition des responsabilités entre les différents modules. Chaque ùicroservices constitue un paquetage autonome et organisé.
+
+**Organisation général**
+- **account-service** : Gère tout ce qui concerne les comptes clients, de l’inscription à l’authentification, en passant par la gestion du profil et la vérification KYC/AML.
+    - domain : règles métier et entités (Compte, Client).
+    - service : logique applicative, orchestrations métiers.
+    - infrastructure : accès aux bases de données, configuration, intégration avec d’autres services.
+    - web : expose les endpoints RESTful et gère les requêtes entrantes.
+
+- **portefeuille-service** : Responsable de la gestion des portefeuilles financiers, incluant l’approvisionnement, les transactions et la consultation des soldes.
+    - Structure similaire à account-service, séparant clairement domaine, service, infrastructure et web.
+
+- **brokerx-auth** : Bibliothèque interne fournissant les middlewares pour sécuriser les API.
+
+- **brokerx-types** : Contient les DTOs et types partagés entre microservices pour assurer la cohérence et simplifier les échanges.
+
+- **monitoring** : Centralise tous les éléments d’observabilité et de supervision. Ce dossier contient :
+    - prometheus.yml : configuration de Prometheus pour la collecte des métriques applicatives et systèmes.
+    - grafana/ : dashboards Grafana et fichiers de configuration (dashboards.yml, datasources/prometheus.yml) pour visualiser les 4 Golden Signals (latence, débit, erreurs, saturation).
+    - dashboards/brokerx_microservices_dashboard.json : dashboard prêt à l’emploi pour surveiller les microservices BrokerX+.
+  
 ## 6. Vue d'exécution 
 La phase 2 reprend la meme vu d'exécution que la phase 1, aucun UC n'a été ajouté par manque de temps. Le travail a été centré sur la division en microservices, l'observabilité et la persistance.
 ### 6.1 Description des 3 UC Must
@@ -426,4 +447,4 @@ Enfin pour lancer chaque service dans 2 terminals :
 Vous pourrez lancer : 
 - localhost:8080 et localhost:8081 pour les 2 services 
 - localhost:9090 pour Prometheus
-- localhost:3000 pour Grafana
+- localhost:3001 pour Grafana
