@@ -1,7 +1,9 @@
-## 1. Introduction et Objectifs
+# **Projet BorkerX - phase2**
+
+## **1. Introduction et Objectifs**
 BrokerX+ est une plateforme émergente de courtage en ligne qui souhaite moderniser son système de gestion des opérations de courtage pour répondre à la croissance de sa clientèle et aux exigences de fiabilité, sécurité et performance.
 
-### Panorama des exigences 
+### **Panorama des exigences** 
 
 BrokerX est une plateforme de courtage en ligne pour investisseurs particuliers. Cette application offre une interface de courtage moderne. En plus des buts de la phase1, cette deuxième phase a pour but de : 
 - concevoir une architecture microservices orchestrée, exposée via une API Gateway,
@@ -9,7 +11,7 @@ BrokerX est une plateforme de courtage en ligne pour investisseurs particuliers.
 - assurer la qualité et l’observabilité avec logs structurés, métriques Prometheus et dashboards Grafana,
 - assurer la qualité par les tests automatisés,
 
-### Objectifs qualité
+### **Objectifs qualité**
 
 | Priorité | Objectif qualité | Scénario |
 |----------|------------------|----------|
@@ -18,34 +20,34 @@ BrokerX est une plateforme de courtage en ligne pour investisseurs particuliers.
 | 3 | **Maintenabilité** | Code simple et bien structuré pour faciliter l'évolution |
 | 4 | **Observabilité et Performance** | Logs structurés, dashboards Grafana, métriques Prometheus, optimisation latence/P95, throughput et saturation |
 
-### Parties prenantes (Stakeholders)
+### **Parties prenantes (Stakeholders)**
 - Clients : utilisateurs via interface web/mobile.
 - Opérations Back-Office : gestion des règlements, supervision.
 - Conformité / Risque : surveillance pré- et post-trade.
 - Fournisseurs de données de marché : cotations en temps réel.
 - Bourses externes : simulateurs de marché pour routage d’ordres.​
 
-## 2. Contraintes
+## 2. **Contraintes**
 | Contrainte | Description |
 |------------|-------------|
 | **Technologie** | Utilisation de Java/C++/Rust/... (pas de Python), Docker, et GitLab/GitHub CI/CD |
 | **Déploiement** | Déploiement via conteneurs Docker Compose pour microservices + Gateway + observabilité |
-| **PostgreSQL** | Base de données relationnelle pour chaque microservices |
+| **PostgreSQL** | Base de données relationnelle pour chaque microservice |
 | **Microservices** | Découpage du monolithe en services indépendants conteneurisés |
 | **API Gateway** | Routage centralisé, CORS, sécurité, journaux d’accès |
 | **Microservices** | Logs structurés, métriques Prometheus, dashboards Grafana |
 | **Microservices** | oad balancing via NGINX/Traefik, caching Redis/mémoire |
 
 
-## 3. Contexte et champ d'application
-### 3.1 Contexte métier
+## **3. Contexte et champ d'application**
+### **3.1 Contexte métier**
 
 Le système permet au client de : 
 - Créer un compte
 - S'authentifier
 - Approvisionner son portfeuille
 
-## 3.2 Contexte technique
+## **3.2 Contexte technique**
 - **Client** : *main.rs* - Application Rust CLI
 - **Couche API** : RESTful API exposée via API Gateway, versionnée, JSON, erreurs normalisées
 - **Couche base de données** : PostgreSQL pour chaque microservice
@@ -53,7 +55,7 @@ Le système permet au client de :
 - **Observabilité** : Prometheus pour métriques, Grafana pour dashboards, logs structurés JSON
 - **Load balancing** : NGINX/Traefik pour distribuer la charge entre instances de microservices
 
-## 4. Stratégie de solution 
+## **4. Stratégie de solution** 
 La solution BrokerX+ s’appuie sur un monolithe modulaire en Phase 1. La phase 2 s'appuie sur un système en microservices, le Domain-Driven Design (DDD) et l’architecture hexagonale, garantissant testabilité, maintenabilité et évolutivité.
 
 Pour proposer une solution qui suit ses attentes la, les étapes d'implémentation suivis sont les suivantes :
@@ -68,22 +70,22 @@ Pour proposer une solution qui suit ses attentes la, les étapes d'implémentati
 - Documenter les choix et structurer les ADR.
 
 
-## 5. Vue du bloc de consctruction 
-### 5.1 Diagramme de classes
+## **5. Vue du bloc de consctruction** 
+### **5.1 Diagramme de classes**
 Cette vue présente les principaux éléments métiers du système, ainsi que leurs relations.
-Dans cette deuxième phase, on se concentre sur les trois meme cas d’utilisation qie la phase 1 : inscription, authentification et approvisionnement du portefeuille. Cela se traduit par deux grands ensembles : la gestion des clients et la gestion des portefeuilles.
+Dans cette deuxième phase, on se concentre sur les trois meme cas d’utilisation que la phase 1 : inscription, authentification et approvisionnement du portefeuille. Cela se traduit par deux grands ensembles : la gestion des clients et la gestion des portefeuilles.
 Ainsi 2 bases de données sont gérées : 
 
 ![Classes](images/diag_classe_phase2.png)
 
 
-### 5.2 Diagramme de paquetage
+### **5.2 Diagramme de paquetage**
 ![Paquetage](images/diagramme_paquetage_phase2.png)
 
-Le diagramme de paquetage présente la structure logique du système en microservices et la répartition des responsabilités entre les différents modules. Chaque ùicroservices constitue un paquetage autonome et organisé.
+Le diagramme de paquetage présente la structure logique du système en microservices et la répartition des responsabilités entre les différents modules. Chaque microservice constitue un paquetage autonome et organisé.
 
 **Organisation général**
-- **account-service** : Gère tout ce qui concerne les comptes clients, de l’inscription à l’authentification, en passant par la gestion du profil et la vérification KYC/AML.
+- **account-service** : Gère tout ce qui concerne les comptes clients, de l’inscription à l’authentification, en passant par la gestion du profil et la vérification.
     - domain : règles métier et entités (Compte, Client).
     - service : logique applicative, orchestrations métiers.
     - infrastructure : accès aux bases de données, configuration, intégration avec d’autres services.
@@ -101,9 +103,9 @@ Le diagramme de paquetage présente la structure logique du système en microser
     - grafana/ : dashboards Grafana et fichiers de configuration (dashboards.yml, datasources/prometheus.yml) pour visualiser les 4 Golden Signals (latence, débit, erreurs, saturation).
     - dashboards/brokerx_microservices_dashboard.json : dashboard prêt à l’emploi pour surveiller les microservices BrokerX+.
   
-## 6. Vue d'exécution 
+## **6. Vue d'exécution** 
 La phase 2 reprend la meme vu d'exécution que la phase 1, aucun UC n'a été ajouté par manque de temps. Le travail a été centré sur la division en microservices, l'observabilité et la persistance.
-### 6.1 Description des 3 UC Must
+### **6.1 Description des 3 UC Must**
 #### UC1 - Inscription & Vérification d’identité
 ##### Objectif​
 Permettre à un nouvel utilisateur de créer un compte sur la plateforme en fournissant ses
@@ -174,7 +176,7 @@ dépôts simulés, afin de disposer de liquidités nécessaires pour placer des 
 
 ![Use case](images/cas_utilisation.png)
 
-### 6.2 MoSCoW
+### **6.2 MoSCoW**
 #### Must  
 1. Inscription & Vérification d’identité
 → Sans inscription, aucun utilisateur ne peut exister.
@@ -203,7 +205,7 @@ Appariement interne & Exécution (matching)
 Confirmation d’exécution & Notifications
 - Dépend du matching, donc hors périmètre Phase 1.
   
-## 7. Vue de déploiement
+## **7. Vue de déploiement**
 Cette vue montre comment le système est déployé techniquement.
 La phase 2 présente un déploiement technique différent de celui de la phase 1. En effet, on adopte une architecture microservices conteneurisée orchestrée par une API Gateway. Chaque microservice est encapsulé dans son propre conteneur Docker, ce qui permet une isolation complète, une scalabilité horizontale et un déploiement indépendant. 
 
@@ -218,51 +220,47 @@ Le flux typique d'une requete dans cette nouvelle architecture est le suivant :
    
 ![Deploiement](images/deploiement_phase2.png)
 
-## 8. Concepts transversaux
-### 8.1 ORM(diesel)
+## **8. Concepts transversaux**
+### **8.1 ORM(diesel)**
 Un ORM (Object-Relational Mapping) comme Diesel en Rust permet de travailler avec la base de données PostgreSQL en utilisant des objets Rust au lieu d’écrire directement du SQL.
 - Cela rend le code plus sûr et moins sujet aux erreurs.
 - Les changements dans la base peuvent être suivis grâce aux migrations.
 - Le code métier n’a pas besoin de connaître les détails SQL.
 
-### 8.2 DTO 
+### **8.2 DTO** 
 Les DTOs servent à transférer les données entre le cœur du programme et le reste (interface, stockage…).
 - Ils permettent de protéger certaines informations sensibles.
 - Ils simplifient l’envoi et la réception des données.
 
 Par exemple, pour afficher un client, on peut utiliser un DTO qui contient juste le nom et l’email, et pas le mot de passe.
 
-### 8.3 Architecture hexagonal 
+### **8.3 Architecture hexagonal** 
 Chaque microservice applique l’architecture hexagonale, séparant clairement le domaine métier des dépendances externes :
 - Adaptateurs pour la base de données, les caches, ou les interfaces REST
 - Port et interfaces pour exposer les fonctionnalités métier et recevoir les requêtes
 
-### 8.4 RESTful API 
+### **8.4 RESTful API** 
 Chaque service expose une API RESTful versionnée : 
 - Format JSON pour les requêtes et réponses
 - Codes HTTP normalisés pour signaler le succès, l’échec ou les erreurs
 - Gestion d’erreurs centralisée et normalisée, avec messages clairs et traçables
 
-### 8.5 Sécruité API
+### **8.5 Sécruité API**
 Pour sécuriser les endpoints on utilise : 
 - JWT pour authentification et autorisation
 - CORS configuré côté Gateway et services
 
-### Observabilité
+### **8.6 Observabilité**
 Chaque service implémente l’observabilité :
 - Logs structurés JSON, centralisés
 - Métriques applicatives et système collectées par Prometheus
 - Dashboards Grafana pour visualiser les 4 Golden Signals : latence, débit, erreurs et saturation
 
-### Caching
+### **8.7 Caching**
 
 Endpoints coûteux ou fréquemment sollicités utilisent le cache mémoire pour réduire la charge sur les bases de données et améliorer les temps de réponse. Les règles d’expiration et d’invalidation sont définies par service.
 
-### Load Balancing
-
-Les instances multiples de chaque microservice sont accessibles via NGINX ou Traefik, qui distribuent la charge et assurent la tolérance aux pannes et la haute disponibilité. Le routage et le load balancing sont configurés pour permettre des scénarios de scalabilité horizontale et tests de performance.
-
-## 9. Décisions architecturales
+## **9. Décisions architecturales**
 ### ADR-001 : Style d'architecture
 #### Statut
 Accepté 
@@ -328,20 +326,20 @@ Nous avons besoin de mesurer les 4 Golden Signals, d'identifier les goulots d’
 #### Conséquences
 Visibilité opérationnelle accrue, analyse sous charge, capacité à optimiser la performance et la scalabilité des microservices.
 
-## 10. Exigence de qualité
-### 10.1 Maintenabilité
+## **10. Exigence de qualité**
+### **10.1 Maintenabilité**
 - **Code organisé et documenté** : structure modulaire, conventions de nommage homogènes et documentation générée (template arc42) 
 - **Traçabilité des décisions** : les choix structurants sont consignés dans des ADR, couvrant la migration vers microservices, l’API REST, la Gateway et l’observabilité.
 - **Tests automatisés** : tests intégrée au pipeline CI pour détecter rapidement les régressions.
 
-### 10.2 Flexibilité 
+### **10.2 Flexibilité** 
 - **Architecture hexagonale** : chaque microservice isole le domaine métier des dépendances techniques (base de données, cache, services externes), ce qui permet de remplacer ou d’ajouter des adaptateurs sans modifier la logique métier.
 - **Patrons de conception** : usage de Diesel ORM et de DTOs pour découpler persistance, transport et logique métier dans chaque service.
 - **Couches indépendantes** : séparation claire entre domaine, application, infrastructure et API REST, facilitant l’intégration de nouveaux cas d’utilisation ou règles métier.
 - **Paramétrage par configuration** : variables d’environnement Docker pour chaque service, Gateway et observabilité, rendant le système adaptable.
 - **Sécurité REST** : JWT pour authentification et autorisation, CORS configuré via Gateway, validation et assainissement strict des entrées pour tous les endpoints.
 
-### 10.3 Evolutivité
+### **10.3 Evolutivité**
 - **Base de données PostgreSQL** : chaque microservice peut disposer de son propre schéma ou cluster, garantissant scalabilité et isolation des données.
 - **Monolithe modulaire** : découpage logique en services indépendants, permettant le scaling horizontal par service.
 - **CI/CD et conteneurisation** : le pipeline GitLab/GitHub automatise build, tests et déploiement, garantissant la reproductibilité.
@@ -350,14 +348,15 @@ Visibilité opérationnelle accrue, analyse sous charge, capacité à optimiser 
 - **Observabilité opérationnelle** : logs structurés, métriques Prometheus, dashboards Grafana permettant de suivre les 4 Golden Signals (latence, débit, erreurs, saturation) et d’identifier rapidement les goulots d’étranglement.
 - **Caching** : endpoints critiques mis en cache, améliorant latence et débit sous charge.
 
-## 11. Risque et dette techniques
-### 11.1 Risque techniques
-**Scalabilité limitée** : le monolithe pourrait devenir difficile à gérer si le nombre de transactions augmente fortement.
+## **11. Risque et dette techniques**
+### **11.1 Risque techniques**
+La migration vers une architecture microservices introduit de nouveaux risques techniques. Le principal concerne la cohérence des données entre services indépendants, notamment lors des opérations impliquant plusieurs domaines (ex : création de compte et portefeuille).
+Les communications inter-services via l’API Gateway peuvent engendrer une légère latence et nécessitent une surveillance de la performance. Enfin, la sécurisation des échanges (JWT, CORS, authentification distribuée) doit être rigoureusement maîtrisée pour éviter toute faille.
 
-### 11.2 Dettes techniques
-Pas encore de couche API HTTP : la communication directe Rust → PostgreSQL simplifie la phase 1 mais limite l’interopérabilité.
+### **11.2 Dettes techniques**
+L’absence de mécanismes asynchrones (events, message broker) rend les échanges encore strictement synchrones, ce qui réduit la résilience.
 
-## 12. Glossaires
+## **12. Glossaires**
 ### Glossaire Métier
 
 | Terme | Définition |
@@ -407,8 +406,8 @@ Pas encore de couche API HTTP : la communication directe Rust → PostgreSQL sim
 | **4 Golden Signals** | Principaux indicateurs de performance : latence, trafic (throughput), erreurs, saturation |
 | **Load Balancing** | Technique de répartition de la charge entre plusieurs instances d’un service pour assurer la haute disponibilité et optimiser la performance |
 
-# Guide d'exploitation
-## Prérequis
+# **Guide d'exploitation**
+## **Prérequis**
 Avant de commencer, assurez-vous d’avoir installé Git, Docker, et Rust.
 Ces outils permettent de cloner le projet, exécuter l’application dans un conteneur et compiler. 
 
@@ -422,7 +421,7 @@ Verifier l'installation :
 - docker --version 
 - cargo --version
 - 
-## Cloner le projet 
+## **Cloner le projet** 
 Pour accéder à l'application, il faut cloner le projet. Pour cela utiliser la commande : 
 
 clone avec ssh :
@@ -433,7 +432,7 @@ clone avec http :
 
 Enfin se placer dans le répertoire : **cd BorkerX**
 
-## Lancer l'application avec Docker
+## **Lancer l'application avec Docker**
 Démarrer l'application et la base de donnée avec Docker à la racine du projet : **docker compose up --build**
 
 Cela permet de lancer : 

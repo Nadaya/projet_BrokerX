@@ -29,7 +29,6 @@ pub async fn basic_auth(
                             let login_request = LoginRequest { username, password };
 
                             // Appel à account-service pour vérifier les identifiants
-                            // On suppose que account-service expose un endpoint POST /login
                             let client = Client::new();
                             let res = client
                                 .post("http://account-service:8080/login")

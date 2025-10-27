@@ -89,15 +89,4 @@ impl Account {
                .first::<Account>(conn)
                .optional()
     }
-
-    // Récupérer un compte par username
-    pub fn get_by_username(
-        conn: &mut PgConnection,
-        usern: &str,
-    ) -> QueryResult<Option<Account>> {
-        use crate::infrastructure::persistance::account::dsl::*;
-        account.filter(username.eq(usern))
-               .first::<Account>(conn)
-               .optional()
-    }
 }
